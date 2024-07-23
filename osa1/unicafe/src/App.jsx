@@ -11,27 +11,49 @@ const StatisticLine = ({text, value}) => {
 
 // Komponentti statistics, joka näyttää tilastot
 const Statistics = (props) => {
-  const all = props.good+props.neutral+props.bad
+  const all = props.good + props.neutral + props.bad;
   if (all === 0) {
-    return(
+    return (
       <div>
         <p>No feedback given</p>
       </div>
-    )
+    );
   }
-  return(
+  return (
     <div>
-      <br></br>
-      <StatisticLine text = 'good' value={props.good} />
-      <StatisticLine text = 'neutral' value={props.neutral} />
-      <StatisticLine text = 'bad' value={props.bad} />
-      <StatisticLine text = 'all' value={all} />
-      <StatisticLine text = 'average' value={(props.good*1+props.bad*-1)/all} />
-      <StatisticLine text = 'positive' value={[(props.good/all), '%'].join(' ')}/>
+      <h1>statistics</h1>
+      <table style={{ padding: 0 }}>
+        <tbody>
+          <tr style={{ lineHeight: '0.2' }}>
+            <td>good</td>
+            <td><StatisticLine text="" value={props.good} /></td>
+          </tr>
+          <tr style={{ lineHeight: '0.2' }}>
+            <td>neutral</td>
+            <td><StatisticLine text="" value={props.neutral} /></td>
+          </tr>
+          <tr style={{ lineHeight: '0.2' }}>
+            <td>bad</td>
+            <td><StatisticLine text="" value={props.bad} /></td>
+          </tr>
+          <tr style={{ lineHeight: '0.2' }}>
+            <td>all</td>
+            <td><StatisticLine text="" value={all} /></td>
+          </tr>
+          <tr style={{ lineHeight: '0.2' }}>
+            <td>average</td>
+            <td><StatisticLine text="" value={(props.good * 1 + props.bad * -1) / all} /></td>
+          </tr>
+          <tr style={{ lineHeight: '0.2' }}>
+            <td>positive</td>
+            <td><StatisticLine text="" value={[(props.good / all) * 100, '%'].join(' ')} /></td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   )
-
 }
+
 
 //Komponentti Button, joka luo painonapin
 const Button = (props) => {
