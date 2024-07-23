@@ -1,5 +1,5 @@
-import { useState } from 'react'
-
+import { useState, useEffect } from 'react'
+import axios from 'axios'
 
 const Person = ({person}) => {
   return (
@@ -42,16 +42,20 @@ const Persons = (props) => {
 }
 
 const App = () => {
-  const [persons, setPersons] = useState([
-    { name: 'Arto Hellas', number: '040-123456' },
-    { name: 'Ada Lovelace', number: '39-44-5323523' },
-    { name: 'Dan Abramov', number: '12-43-234345' },
-    { name: 'Mary Poppendieck', number: '39-23-6423122' }
-  ])
 
+  const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [search, setSearch] = useState('')
+
+   //Haetaan data tietokannasta
+  useEffect(() => {
+    axios
+      .get('http://localhost:3001/persons') //Haetaan data
+      .then(response => {  //Sijoitetaan vastaus 
+        setPersons(response.data)
+      })
+  }, [])
 
   const personsToShow = search == ''
   ? persons
