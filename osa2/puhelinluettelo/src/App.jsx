@@ -42,12 +42,27 @@ const Persons = ({personsToShow, handleDelete}) => {
   )
 }
 
+const Notification = ({ message, type }) => {
+  if (message === null) {
+    return null
+  }
+
+  return (
+    <div className={type}>
+      {message}
+    </div>
+  )
+}
+
+
 const App = () => {
 
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [search, setSearch] = useState('')
+  const [noteMessage, setNote] = useState(null)
+  const [noteType, setNoteType] = useState(null)
 
    //Haetaan data tietokannasta
   useEffect(() => {
@@ -81,7 +96,14 @@ const App = () => {
         .create({name : newName, number:newNumber}) //Luodaan person
         .then(returnedNotes => { //Lisätään person listaan
           setPersons(persons.concat(returnedNotes))
-      })
+          setNoteType("success")
+          setNote(`Added ${newName}`)
+          setTimeout(() => { //Timeout viestille 5 sekuntia
+            setNote(null) //Tämän jälkeen viesti muutetaan null:iksi
+            setNoteType(null)
+          }, 5000)
+        })
+        
     }
     setNewName('')
     setNewNumber('')
@@ -92,8 +114,16 @@ const App = () => {
       personService //Kutsutaan personServiceä 
       .remove(person.id) //pyydetään poistamaan person
       .then(returnedNotes => { //Poistetaan person listasta
+        setPersons(persons.filter(n => n.id !== person.id))})
+      .catch(error => {
+        setNoteType("error")
+        setNote(`Information of ${newName} is already been removed from server`)
+        setTimeout(() => { //Timeout viestille 5 sekuntia
+          setNote(null) //Tämän jälkeen viesti muutetaan null:iksi
+          setNoteType(null)
+        }, 5000)
         setPersons(persons.filter(n => n.id !== person.id))
-    })
+      })
     }
   }
 
@@ -102,6 +132,7 @@ const App = () => {
       <h2>Phonebook</h2>
       <Filter onChange={(event) => setSearch(event.target.value)} value={search}/>
       <h1>add a new</h1>
+      <Notification message={noteMessage} type={noteType} />
       <PersonForm newName={newName} newNumber={newNumber} 
         addPerson={(event) => setNewName(event.target.value)} 
         addNumber={(event) => setNewNumber(event.target.value)} handleTb={handleTb}
