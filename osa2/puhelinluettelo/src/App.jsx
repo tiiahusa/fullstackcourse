@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
+import personService from './services/persons'
 
-const Person = ({person}) => {
+const Person = ({person, handleDelete}) => {
   return (
-    <p>{person.name} {person.number}</p>
+    <p>{person.name} {person.number} {' '}
+    <button onClick={() => handleDelete(person)}>delete</button></p>
   )
 }
 
@@ -31,11 +32,11 @@ const PersonForm = (props) => {
   )
 }
 
-const Persons = (props) => {
+const Persons = ({personsToShow, handleDelete}) => {
   return(
     <ul> {
-      props.personsToShow.map(person => 
-        <Person key={person.name} person = {person} />
+      personsToShow.map(person => 
+        <Person key={person.name} person={person} handleDelete={handleDelete} />
       )}
     </ul>
   )
@@ -50,10 +51,10 @@ const App = () => {
 
    //Haetaan data tietokannasta
   useEffect(() => {
-    axios
-      .get('http://localhost:3001/persons') //Haetaan data
-      .then(response => {  //Sijoitetaan vastaus 
-        setPersons(response.data)
+    personService
+      .getAll()
+      .then(data => {  //Sijoitetaan vastaus 
+        setPersons(data)
       })
   }, [])
 
@@ -65,14 +66,35 @@ const App = () => {
 
   const handleTb = (event) => {
     event.preventDefault()
-    if(persons.find(item => item.name.toLowerCase() == newName.toLowerCase())){
-      alert(`${newName} is already added to phonebook`)
+    const addedPerson = persons.find(item => item.name.toLowerCase() === newName.toLowerCase())
+    if(addedPerson){
+      if(window.confirm(`${addedPerson.name} is already added to phonebook, replace the old number with a new one?`)) {
+        const updatedPerson = { ...addedPerson, number: newNumber }
+        personService
+          .update(addedPerson.id, updatedPerson)
+          .then(returnedNotes => {
+            setPersons(persons.filter(n => n.id !== addedPerson.id).concat(updatedPerson))
+          })
+      }
     } else {
-      const person = {name : newName, number:newNumber}
-      setPersons(persons.concat(person))
+      personService //Kutsutaan personServiceä 
+        .create({name : newName, number:newNumber}) //Luodaan person
+        .then(returnedNotes => { //Lisätään person listaan
+          setPersons(persons.concat(returnedNotes))
+      })
     }
     setNewName('')
     setNewNumber('')
+  }
+
+  const deletePerson = (person) => { 
+    if(window.confirm(`Delete ${person.name} ?`)) { //Jos Confirmiin vastataan ok
+      personService //Kutsutaan personServiceä 
+      .remove(person.id) //pyydetään poistamaan person
+      .then(returnedNotes => { //Poistetaan person listasta
+        setPersons(persons.filter(n => n.id !== person.id))
+    })
+    }
   }
 
   return (
@@ -80,9 +102,12 @@ const App = () => {
       <h2>Phonebook</h2>
       <Filter onChange={(event) => setSearch(event.target.value)} value={search}/>
       <h1>add a new</h1>
-      <PersonForm newName={newName} newNumber={newNumber} addPerson={(event) => setNewName(event.target.value)} addNumber={(event) => setNewNumber(event.target.value)} handleTb={handleTb}/>
+      <PersonForm newName={newName} newNumber={newNumber} 
+        addPerson={(event) => setNewName(event.target.value)} 
+        addNumber={(event) => setNewNumber(event.target.value)} handleTb={handleTb}
+        />
       <h2>Numbers</h2>
-      <Persons personsToShow={personsToShow} />
+      <Persons personsToShow={personsToShow} handleDelete={deletePerson}/>
     </div>
   )
 
