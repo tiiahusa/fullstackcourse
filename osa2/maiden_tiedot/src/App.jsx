@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
+//API-key 9fb0a1a7d0987626b48ea44653f30c98
+//($env:VITE_APIKEY="9fb0a1a7d0987626b48ea44653f30c98") -and (npm run dev)
 
 const Country = ({countryData, countries, onSelectCountry}) => {
 
@@ -30,6 +32,7 @@ const Country = ({countryData, countries, onSelectCountry}) => {
           )}
           </ul><div className="images">
           <img src={countryData.flags.png} alt="" width="300" height="200"></img></div>
+          <Weather lat={countryData.capitalInfo.latlng[0]} lon={countryData.capitalInfo.latlng[1]} capital={countryData.capital} />
         </div>
       )
 
@@ -53,7 +56,42 @@ const Country = ({countryData, countries, onSelectCountry}) => {
 
 }
 
+const Weather = (props) => {
+  const [weatherData, setWeather] = useState(null)
+  const api_key = import.meta.env.VITE_APIKEY
+  //const url = `https://api.openweathermap.org/geo/1.0/direct?q=${props.capital}&limit=1&appid=${api_key}`
+  const url = `https://api.openweathermap.org/data/2.5/weather?lat=${props.lat}&lon=${props.lon}&appid=${api_key}&units=metric`
+    useEffect(() => {
+        axios
+          .get(url)
+          .then((response) => {
+            setWeather(response.data)
+          })
+          .catch((error) => console.log("Säätietojen haku päättyy virheeseen", error))
+  }, [props.capital])
+  
+    if(weatherData){
+      const img_url = `https://openweathermap.org/img/wn/${weatherData.weather[0].icon}@2x.png`
+      return (
+        <div>
+          <h3>Weather in {props.capital}</h3>
+          <p>Temperature: {weatherData.main.temp} Celsius</p>
+          <p>Wind: {weatherData.wind.speed} m/s</p>
+          <img src={img_url} />
+        </div>
+      )
+    }
 
+ 
+    
+  
+  return (
+    <div>
+      <h3>Weather in {props.capital}</h3>
+
+    </div>
+  )
+}
 
 const Language = ({lan}) => {
   return(
