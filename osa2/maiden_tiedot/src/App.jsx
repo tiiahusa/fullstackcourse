@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
-//API-key 9fb0a1a7d0987626b48ea44653f30c98
-//($env:VITE_APIKEY="9fb0a1a7d0987626b48ea44653f30c98") -and (npm run dev)
+
 
 const Country = ({countryData, countries, onSelectCountry}) => {
 
