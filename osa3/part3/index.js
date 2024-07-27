@@ -7,6 +7,7 @@ const app = express()
 
 //Tämän avulla voidaan requestista poimia bodysta tarvittavia tietoja, esim post-pyynnön yhteydessä:
 app.use(express.json())
+app.use(express.static('dist'))
 //Middlewaren käyttöönotto:
 //app.use(requestLogger)
 
@@ -30,6 +31,11 @@ let notes = [
       id: "3",
       content: "GET and POST are the most important methods of HTTP protocol",
       important: true
+    },
+    {
+      id: "4",
+      content: "Tiian oma",
+      important: false
     }
   ]
 
