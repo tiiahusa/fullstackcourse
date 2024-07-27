@@ -8,7 +8,7 @@ const app = express()
 //Tämän avulla voidaan requestista poimia bodysta tarvittavia tietoja, esim post-pyynnön yhteydessä:
 app.use(express.json())
 //Middlewaren käyttöönotto:
-app.use(requestLogger)
+//app.use(requestLogger)
 
 const cors = require('cors')
 
@@ -141,7 +141,7 @@ const app = http.createServer((request, response) => {
 const PORT = 3001
 app.listen(PORT)*/
 
-//Uudet määrittelyt kun siirretään sovellus nettiin:
+//Uudet määrittelyt kun siirretään sovellus nettiin, eli porttitieto haetaan nyt ympäristömuuttujasta, jos se on annettu:
 const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
