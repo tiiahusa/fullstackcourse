@@ -55,10 +55,11 @@ test('a valid blog can be added ', async () => {
     .expect('Content-Type', /application\/json/)
 
   const response = await api.get('/api/blogs')
-  const contents = response.body.map(r => r.title)
+  const title = response.body.map(r => r.title)
+  const url = response.body.map(r => r.url)
   assert.strictEqual(response.body.length, helper.initialBlogs.length + 1)
-
-  assert(contents.includes('Testi5'))
+  assert(url.includes('http://www.tiiantest.com'))
+  assert(title.includes('Testi5'))
 })
 
 //Blogin tallennus onnistuu
@@ -116,38 +117,56 @@ test('blog without url not added', async () => {
   
     assert.strictEqual(response.body.length, helper.initialBlogs.length)
   })
-/*
-//Voidaan katsella yksittäistä muistiinpanoa
-test('a specific blog can be viewed', async () => {
+
+//Voidaan poistaa yksittäinen blogi
+test('a blog can be deleted', async () => {
+    const blogsAtStart = await helper.blogsInDb()
+    const blogToDelete = blogsAtStart[0]
+  
+    await api
+      .delete(`/api/blogs/${blogToDelete.id}`)
+      .expect(204)
+  
+    const blogsAtEnd = await helper.blogsInDb()
+  
+    const contents = blogsAtEnd.map(r => r.title)
+    assert(!contents.includes(blogToDelete.title))
+  
+    assert.strictEqual(blogsAtEnd.length, blogsAtStart.length - 1)
+  })
+
+
+
+test('a specific blog can updated', async () => {
   const blogsAtStart = await helper.blogsInDb()
 
-  const blogToView = notesAtStart[0]
+  const blogToView = blogsAtStart[0]
 
   const resultBlog = await api
-    .get(`/api/blogs/${noteToView.id}`)
+    .get(`/api/blogs/${blogToView.id}`)
     .expect(200)
     .expect('Content-Type', /application\/json/)
 
-  assert.deepStrictEqual(resultBlog.body, blogToView)
+  const updatedBlog = await api
+    .put(`/api/blogs/${blogToView.id}`)
+    .send({likes: 999})
+    .expect(202)
+    .expect('Content-Type', /application\/json/)
+
+
+  assert.notStrictEqual(resultBlog.body.likes, updatedBlog.body.likes)
+  assert.strictEqual(999, updatedBlog.body.likes)
 })
 
-//Voidaan poistaa yksittäinen muistiinpano
-test('a blog can be deleted', async () => {
-  const blogsAtStart = await helper.blogsInDb()
-  const blogToDelete = blogsAtStart[0]
+test('try update, but blog not found, return 400 bad request', async () => {
+ 
+    const updatedBlog = await api
+      .put(`/api/blogs/111`)
+      .send({likes: 999})
+  
+    assert.strictEqual(400, updatedBlog.statusCode)
+  })
 
-  await api
-    .delete(`/api/blogs/${blogToDelete.id}`)
-    .expect(204)
-
-  const blogsAtEnd = await helper.blogsInDb()
-
-  const contents = blogsAtEnd.map(r => r.content)
-  assert(!contents.includes(blogToDelete.content))
-
-  assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length - 1)
-})
-*/
 
 after(async () => {
   await mongoose.connection.close()
