@@ -7,32 +7,24 @@ notesRouter.get('/', async (request, response) => {
 })
   
   // Mongo-db tietokannasta yksittäisen idn haku:
-  notesRouter.get('/:id', async (request, response, next) => {
-    try {
-      const note = await Note.findById(request.params.id)
-      if (note) {
-        response.json(note)
-      } else {
-        response.status(404).end()
-      }
-    } catch(exception) {
-      next(exception)
+  notesRouter.get('/:id', async (request, response) => {
+    const note = await Note.findById(request.params.id)
+    if (note) {
+      response.json(note)
+    } else {
+      response.status(404).end()
     }
   })
 
   // Resurssin poisto Mongo-DB tietokannasta:
-  notesRouter.delete('/:id', async (request, response, next) => {
-    try {
-      await Note.findByIdAndDelete(request.params.id)
-      response.status(204).end()
-    } catch (exception) {
-      next(exception)
-    }
+  notesRouter.delete('/:id', async (request, response) => {
+    await Note.findByIdAndDelete(request.params.id)
+    response.status(204).end()
   })
   
   
   //Post pyyntö MongoDB-tietokantaan
-  notesRouter.post('/', async (request, response, next) => {
+  notesRouter.post('/', async (request, response) => {
     const body = request.body
   
     const note = new Note({
@@ -40,17 +32,8 @@ notesRouter.get('/', async (request, response) => {
       important: body.important || false,
     })
   
-    try {
-      const savedNote = await note.save()
-      response.status(201).json(savedNote)
-    } catch(exception) {
-      next(exception)
-    }
-  
-    note.save().then(savedNote => { //Tallennetaan note ja sitten vastataan se pyyntöön takaisin
-      response.status(201).json(savedNote)  // Koska käytetään .then:iä siinä, saadaan vastaus vain silloin kun muistiinpano oikeasti tallentuntu
-    })
-      .catch(error => next(error))
+    const savedNote = await note.save()
+    response.status(201).json(savedNote)
   })
   
   //Muistiinpanon päivitys
