@@ -25,6 +25,10 @@ const noteSchema = new mongoose.Schema({ //Luodaan skeema muistiinpanolle
     required: true
   },
   important: Boolean,
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }
 })
 
 noteSchema.set('toJSON', { //Muutetaan toJSON-vastausta niin, että muutetaan id objektista stringiksi ja poistetaan turhat __v ja objekti-id vastauksesta
