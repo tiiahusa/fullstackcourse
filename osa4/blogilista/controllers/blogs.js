@@ -1,6 +1,5 @@
 const blogsRouter = require('express').Router()
 const { request, response } = require('../app')
-const { request, response } = require('../app')
 const Blog = require('../models/blog')
 const User = require('../models/user')
 
