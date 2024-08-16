@@ -1,5 +1,6 @@
 const blogsRouter = require('express').Router()
 const { request, response } = require('../app')
+const { request, response } = require('../app')
 const Blog = require('../models/blog')
 const User = require('../models/user')
 
@@ -55,6 +56,7 @@ blogsRouter.get('/', async (request, response) => {
       .then(updatedBlog => {
         response.status(202).json(updatedBlog)
       })
+      .catch(error => next(error))
       .catch(error => next(error))
   })
 
