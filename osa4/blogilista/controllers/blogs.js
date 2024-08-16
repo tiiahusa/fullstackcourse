@@ -1,7 +1,17 @@
 const blogsRouter = require('express').Router()
-const { request, response } = require('../app')
 const Blog = require('../models/blog')
 const User = require('../models/user')
+
+const jwt = require('jsonwebtoken')
+
+  //Autentikointitokenin haku
+  const getTokenFrom = request => {
+    const authorization = request.get('Authorization')
+    if (authorization && authorization.startsWith('Bearer ')) {
+      return authorization.replace('Bearer ', '')
+    }
+    return null
+  }
 
 blogsRouter.get('/', async (request, response) => { 
   const blogs = await Blog
@@ -20,11 +30,21 @@ blogsRouter.get('/', async (request, response) => {
       response.status(404).end()
     }
   })
-  
+
   blogsRouter.post('/', async (request, response) => {
+    console.log('Tullaan ees tänne')
     const body = request.body
-    const users = await User.find({})
-    const user = await User.findById(users[0]._id)
+    console.log(request.body)
+    //Validoidaan token ja haetaan käyttäjän tiedot
+    const decodedToken = jwt.verify(getTokenFrom(request), process.env.SECRET)
+    console.log("validointi alkaa")
+    if (!decodedToken.id) {
+      return response.status(401).json({ error: 'token invalid' })
+    }
+    console.log("Token validoitu ok")
+    const user = await User.findById(decodedToken.id)
+    console.log("Käyttäjä löydetty")
+    console.log(user)
     const blog = new Blog({
         title: body.title,
         author: body.author,
