@@ -22,7 +22,9 @@ blogsRouter.get('/', async (request, response) => {
     }
   })
 
+
   blogsRouter.post('/', async (request, response) => {
+    console.log('Tullaan ees tänne')
     const body = request.body
     console.log("Tullaan tämnne")
     //Validoidaan token ja haetaan käyttäjän tiedot
