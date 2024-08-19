@@ -1,6 +1,6 @@
 POST http://localhost:3001/api/blogs
 Content-Type: application/json
-Authorization: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRpaWFub21hIiwiaWQiOiI2NmJmMmY0NDkyOWRmODk1ZDZjY2NhZDgiLCJpYXQiOjE3MjM4MDkxODUsImV4cCI6MTcyMzgxMjc4NX0.ceWX9IA91TRz4T4bTbTbVdrJJT_Ywy_Dg_Trlac6Ric"
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRpaWFub21hIiwiaWQiOiI2NmJmMmY0NDkyOWRmODk1ZDZjY2NhZDgiLCJpYXQiOjE3MjQwNTA4NDYsImV4cCI6MTcyNDA1NDQ0Nn0.tgNgzZSLwMhgUjmmFbQ1O9pLP5MX7WBEnXlGgXb6Whk
 
 {
     "title": "Testi1",

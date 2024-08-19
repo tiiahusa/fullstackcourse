@@ -4,15 +4,6 @@ const User = require('../models/user')
 
 const jwt = require('jsonwebtoken')
 
-  //Autentikointitokenin haku
-  const getTokenFrom = request => {
-    const authorization = request.get('Authorization')
-    if (authorization && authorization.startsWith('Bearer ')) {
-      return authorization.replace('Bearer ', '')
-    }
-    return null
-  }
-
 blogsRouter.get('/', async (request, response) => { 
   const blogs = await Blog
     .find({}).populate('user', { username: 1, name: 1 }) //Yhdistetään käyttäjätietojen kanssa
@@ -32,19 +23,16 @@ blogsRouter.get('/', async (request, response) => {
   })
 
   blogsRouter.post('/', async (request, response) => {
-    console.log('Tullaan ees tänne')
     const body = request.body
-    console.log(request.body)
+    console.log("Tullaan tämnne")
     //Validoidaan token ja haetaan käyttäjän tiedot
-    const decodedToken = jwt.verify(getTokenFrom(request), process.env.SECRET)
-    console.log("validointi alkaa")
+    const decodedToken = jwt.verify(request.token, process.env.SECRET)
+    console.log("Token", decodedToken)
     if (!decodedToken.id) {
       return response.status(401).json({ error: 'token invalid' })
     }
-    console.log("Token validoitu ok")
+
     const user = await User.findById(decodedToken.id)
-    console.log("Käyttäjä löydetty")
-    console.log(user)
     const blog = new Blog({
         title: body.title,
         author: body.author,
@@ -61,8 +49,20 @@ blogsRouter.get('/', async (request, response) => {
   })
 
   blogsRouter.delete('/:id', async (request, response) => {
-    await Blog.findByIdAndDelete(request.params.id)
-    response.status(204).end()
+
+    const decodedToken = jwt.verify(request.token, process.env.SECRET)
+    if (!decodedToken.id) {
+      return response.status(401).json({ error: 'token invalid' })
+    } 
+
+    const blog = await Blog.findById(request.params.id)
+    if (decodedToken.id.toString() === blog.user._id.toString()) {
+      await Blog.findByIdAndDelete(request.params.id)
+      return response.status(204).end()
+      
+    }
+    return response.status(401).json({ error: 'user cannot delete blog'})
+    
   })
 
   blogsRouter.put('/:id', async (request, response, next) => {
