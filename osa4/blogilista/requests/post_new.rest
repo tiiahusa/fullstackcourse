@@ -1,9 +1,10 @@
 POST http://localhost:3001/api/blogs
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRpaWFub21hIiwiaWQiOiI2NmJmMmY0NDkyOWRmODk1ZDZjY2NhZDgiLCJpYXQiOjE3MjQwNDMzMzcsImV4cCI6MTcyNDA0NjkzN30.je7gf1TXZzpHvBSTTw-Ppg6JdbOfm8jIlCoAK5LMBeY
 
 {
-    "title": "Testi1",
+    "title": "Testi uusi",
     "author": "tiia",
-    "url": "http://www.tiablogi.com",
-    "likes": 600
+    "url": "http://www.blogi.com",
+    "likes": 200
 }
