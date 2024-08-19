@@ -45,7 +45,6 @@ describe('Open connect ', () => {
   })
 })
 
-
 describe('User tests', () => {
   test('a valid user can added', async () => {
     const usersBefore = await api.get('/api/users')
@@ -224,7 +223,6 @@ describe('User tests', () => {
 
 })
 
-
 describe('User login', () => {
   test('user can login', async () => {
     const newUser = {
@@ -331,33 +329,19 @@ describe('User login', () => {
     assert.strictEqual('invalid username or password', user.body.error)
   })
 
-  /*test('user cannot login without password', async () => {
+  test('user cannot login without password', async () => {
     const newUser = {
       username:"userLoginTest5",
-      name:"User5",
-      password:"userPassword"
+      name:"User5"
     }
-
-    const userReg = {
-      username:"userLoginTest5"
-    }
-
-    await api
+    const user = await api
       .post('/api/users')
       .send(newUser)
-      .expect(201)
-      .expect('Content-Type', /application\/json/)
+      .expect(400)
 
-    const user = await api
-      .post('/api/login')
-      .send(userReg)
-      .expect(401)
-
-      console.log(user.body)
-
-    assert.strictEqual('invalid username or password', user.body.error)
-  })*/
-})
+    assert.strictEqual('password missing or it is too short', user.body.error)
+  })
+}) 
 
 describe('Blog adding', () => {
   //Blogin tallennus onnistuu
@@ -385,29 +369,29 @@ describe('Blog adding', () => {
       .send(userReg)
       .expect(200)
       .expect('Content-Type', /application\/json/)
-      console.log("Testissä body")
-    console.log(user.body)
+
+    const token = `Bearer ${user.body.token}`
 
     const newBlog = {
-      title:"Testi5",
-      author:"tiia",
-      url:"http://www.tiiantest.com",
-      likes:0
-    }
-
+        title: "Testi32",
+        author: "tiia",
+        url: "http://www.tiablogi.com",
+        likes: 600
+    };
+    
     await api
       .post('/api/blogs')
-      .set('Authorization', `Bearer ${user.body.token}`)
-      .send(newBlog)
-      .expect(201)
+      .set('Authorization', token)  // Lisää Authorization-otsikko
+      .send(newBlog)  // Lähetä blogin tiedot
+      .expect(201)  // Odota, että vastaus on 201 Created
       .expect('Content-Type', /application\/json/)
 
     const response = await api.get('/api/blogs')
     const title = response.body.map(r => r.title)
     const url = response.body.map(r => r.url)
     assert.strictEqual(response.body.length, helper.initialBlogs.length + 1)
-    assert(url.includes('http://www.tiiantest.com'))
-    assert(title.includes('Testi5'))
+    assert(url.includes('http://www.tiablogi.com'))
+    assert(title.includes('Testi32'))
   })
 
   //Blogin tallennus onnistuu ilman likeä
@@ -435,8 +419,8 @@ describe('Blog adding', () => {
       .send(userReg)
       .expect(200)
       .expect('Content-Type', /application\/json/)
-      console.log("Testissä body")
-    console.log(user.body)
+
+    const token = `Bearer ${user.body.token}`
 
     const newBlog = {
       title:"Testi6",
@@ -444,9 +428,9 @@ describe('Blog adding', () => {
       url:"http://www.tiiantestia.com"
     }
 
-    await api
+    const addedBlog = await api
       .post('/api/blogs')
-      .set('Authorization', `Bearer ${user.body.token}`)
+      .set('Authorization', token)
       .send(newBlog)
       .expect(201)
       .expect('Content-Type', /application\/json/)
@@ -457,6 +441,7 @@ describe('Blog adding', () => {
     assert.strictEqual(response.body.length, helper.initialBlogs.length + 1)
     assert(url.includes('http://www.tiiantestia.com'))
     assert(title.includes('Testi6'))
+    assert.strictEqual(addedBlog.body.likes, 0)
   }) 
 
   //Ei tallenneta ilman autentikointia
@@ -467,14 +452,15 @@ describe('Blog adding', () => {
       likes:0
   }
 
-    await api
+    const message = await api
       .post('/api/blogs')
       .send(newBlog)
-      .expect(400)
+      .expect(401)
 
     const response = await api.get('/api/blogs')
 
     assert.strictEqual(response.body.length, helper.initialBlogs.length)
+    assert.strictEqual(message.body.error, 'token missing')
   })
 
   test('unvalid blog cannot added', async () => {
@@ -501,51 +487,117 @@ describe('Blog adding', () => {
       .send(userReg)
       .expect(200)
       .expect('Content-Type', /application\/json/)
-      console.log("Testissä body")
-    console.log(user.body)
 
+    const token = `Bearer ${user.body.token}`
     const newBlog = {
       author:"tiia",
       url:"http://www.tiiantestia.com"
     }
 
-    await api
+    const message = await api
       .post('/api/blogs')
-      .set('Authorization', `Bearer ${user.body.token}`)
+      .set('Authorization', token)
       .send(newBlog)
       .expect(400)
-
 
     const response = await api.get('/api/blogs')
     const title = response.body.map(r => r.title)
     const url = response.body.map(r => r.url)
     assert.strictEqual(response.body.length, helper.initialBlogs.length)
+    assert.strictEqual(message.body.error, 'Blog validation failed: title: Path `title` is required.')
   }) 
-/*
+
   //Ei tallenneta virheellistä blogia osa 2
   test('blog without url not added', async () => {
-    const newBlog = {
-      title:"Testi7",
-      likes:500
-  }
+    const newUser = {
+      username:"postingTest3",
+      name:"Poster3",
+      password:"userPassword"
+    }
+
+    const userReg = {
+      username:"postingTest3",
+      password:"userPassword"
+    }
 
     await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+
+    const user = await api
+      .post('/api/login')
+      .send(userReg)
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+
+    const token = `Bearer ${user.body.token}`
+    const newBlog = {
+      title:"ilman url testausta",
+      author:"tiia"
+    }
+
+    const message = await api
       .post('/api/blogs')
+      .set('Authorization', token)
       .send(newBlog)
       .expect(400)
 
     const response = await api.get('/api/blogs')
-
+    const title = response.body.map(r => r.title)
+    const url = response.body.map(r => r.url)
     assert.strictEqual(response.body.length, helper.initialBlogs.length)
-  })
-})
+    assert.strictEqual(message.body.error, 'Blog validation failed: url: Path `url` is required.')
+  }) 
 
 
 describe('Edit or delete specific blog', () => {
   //Voidaan poistaa yksittäinen blogi
   test('a blog can be deleted', async () => {
-    const blogsAtStart = await helper.blogsInDb()
-    const blogToDelete = blogsAtStart[0]
+    
+    const newUser = {
+      username:"postingTest3",
+      name:"Poster3",
+      password:"userPassword"
+    }
+
+    const userReg = {
+      username:"postingTest3",
+      password:"userPassword"
+    }
+
+    await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+
+    const user = await api
+      .post('/api/login')
+      .send(userReg)
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+
+    const token = `Bearer ${user.body.token}`
+    const newBlog = {
+      author:"tiia",
+      url:"http://www.tiiantestia.com"
+    }
+
+    const message = await api
+      .post('/api/blogs')
+      .set('Authorization', token)
+      .send(newBlog)
+      .expect(400)
+
+    const response = await api.get('/api/blogs')
+    const title = response.body.map(r => r.title)
+    const url = response.body.map(r => r.url)
+    assert.strictEqual(response.body.length, helper.initialBlogs.length)
+    assert.strictEqual(message.body.error, 'Blog validation failed: title: Path `title` is required.')
+  }) 
+
 
     await api
       .delete(`/api/blogs/${blogToDelete.id}`)
@@ -586,7 +638,7 @@ describe('Edit or delete specific blog', () => {
       .send({likes: 999})
   
     assert.strictEqual(400, updatedBlog.statusCode)
-  })*/
+  })
 
 })
 
