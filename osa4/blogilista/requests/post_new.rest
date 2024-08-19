@@ -1,14 +1,10 @@
 POST http://localhost:3001/api/blogs
 Content-Type: application/json
-<<<<<<< HEAD
-Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRpaWFub21hIiwiaWQiOiI2NmJmMmY0NDkyOWRmODk1ZDZjY2NhZDgiLCJpYXQiOjE3MjQwNTA4NDYsImV4cCI6MTcyNDA1NDQ0Nn0.tgNgzZSLwMhgUjmmFbQ1O9pLP5MX7WBEnXlGgXb6Whk
-=======
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRpaWFub21hIiwiaWQiOiI2NmJmMmY0NDkyOWRmODk1ZDZjY2NhZDgiLCJpYXQiOjE3MjQwNDU1OTMsImV4cCI6MTcyNDA0OTE5M30.yyfv-LrEWaXNQxBGAZAVE6eTxquvqxfWp4Lst0xkstU
->>>>>>> 444c454b9b38504a39b6475c7108f856e7ded693
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRpaWFub21hIiwiaWQiOiI2NmJmMmY0NDkyOWRmODk1ZDZjY2NhZDgiLCJpYXQiOjE3MjQwNjM4NjEsImV4cCI6MTcyNDA2NzQ2MX0.onI5DHR9BcJ0iCMiHMP2alatlh39nqxAT4hP6vtgQik
 
 {
-    "title": "Testi uusi2",
-    "author": "toivo",
-    "url": "http://www.tovonblogi.com",
-    "likes": 500
+    "title": "Testi22",
+    "author": "tiia",
+    "url": "http://www.tiablogi.com",
+    "likes": 600
 }
