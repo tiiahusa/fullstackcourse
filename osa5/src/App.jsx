@@ -9,7 +9,8 @@ const App = () => {
   const [username, setUsername] = useState('') 
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  const [errorMessage, setErrorMessage] = useState(null)
+  const [notification, setNotification] = useState(null)
+  const [notificationType, setNotificationType] = useState(null)
 
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
@@ -45,31 +46,40 @@ const App = () => {
       setUsername('')
       setPassword('')
     } catch (exception) {
-      setErrorMessage('wrong credentials')
+      setNotification('wrong credentials')
+      setNotificationType('error')
       setTimeout(() => {
-        setErrorMessage(null)
+        setNotification(null)
+        setNotificationType(null)
       }, 5000)
     }
   }
 
   const createPost = async (event) => {  
+    event.preventDefault()
     try {
       const blog = await blogService.create({
         title: title,
         author: author,
         url: url
       })
-      console.log(blog)
       setTitle('')
       setAuthor('')
       setUrl('')
-    } catch (exception) {
-      setErrorMessage('creating failed')
+      setNotification(`a new blog ${blog.title} added`)
+      setNotificationType('info')
       setTimeout(() => {
-        setErrorMessage(null)
+        setNotification(null)
+        setNotificationType(null)
+      }, 5000)
+    } catch (exception) {
+      setNotification('blog creating failed')
+      setNotificationType('error')
+      setTimeout(() => {
+        setNotification(null)
       }, 5000)
     }
-    event.preventDefault()
+    
   }
 
   const loginForm = () => (
@@ -105,7 +115,7 @@ const App = () => {
         window.localStorage.clear()
         setUser(null)}}>Logout</button>
       <h1></h1>
-
+      
       <form onSubmit={createPost}>
       <h1>create new</h1>
       <div>
@@ -145,10 +155,9 @@ const App = () => {
 
   return (
     <div>
-      <Notification message={errorMessage} />
       {!user && loginForm()}
+      <Notification message={notification} type={notificationType} />
       {user && <div>
-       <p>{user.name} logged in</p>
          {blogList()}
       </div>}
     </div>
