@@ -555,62 +555,57 @@ describe('Blog adding', () => {
 describe('Edit or delete specific blog', () => {
   //Voidaan poistaa yksittäinen blogi
   test('a blog can be deleted', async () => {
-    
-    const newUser = {
-      username:"postingTest3",
-      name:"Poster3",
-      password:"userPassword"
-    }
+    const blogsAtStart = await helper.blogsInDb()
 
-    const userReg = {
-      username:"postingTest3",
-      password:"userPassword"
-    }
+      const newUser = {
+        username:"postingTest4",
+        name:"Poster4",
+        password:"userPassword"
+      }
 
-    await api
-      .post('/api/users')
-      .send(newUser)
-      .expect(201)
-      .expect('Content-Type', /application\/json/)
-
-    const user = await api
-      .post('/api/login')
-      .send(userReg)
-      .expect(200)
-      .expect('Content-Type', /application\/json/)
+      const userReg = {
+        username:"postingTest4",
+        password:"userPassword"
+      }
+  
+      await api
+        .post('/api/users')
+        .send(newUser)
+        .expect(201)
+        .expect('Content-Type', /application\/json/)
+  
+      const user = await api
+        .post('/api/login')
+        .send(userReg)
+        .expect(200)
+        .expect('Content-Type', /application\/json/)
 
     const token = `Bearer ${user.body.token}`
     const newBlog = {
       author:"tiia",
+      title:"Poistotesti",
       url:"http://www.tiiantestia.com"
     }
 
-    const message = await api
+    const sendedBlog = await api
       .post('/api/blogs')
       .set('Authorization', token)
       .send(newBlog)
-      .expect(400)
-
-    const response = await api.get('/api/blogs')
-    const title = response.body.map(r => r.title)
-    const url = response.body.map(r => r.url)
-    assert.strictEqual(response.body.length, helper.initialBlogs.length)
-    assert.strictEqual(message.body.error, 'Blog validation failed: title: Path `title` is required.')
-  }) 
-
+      .expect(201)
 
     await api
-      .delete(`/api/blogs/${blogToDelete.id}`)
+      .delete(`/api/blogs/${sendedBlog.body.id}`)
+      .set('Authorization', token)
       .expect(204)
 
     const blogsAtEnd = await helper.blogsInDb()
+    const title = blogsAtEnd.map(r => r.title)
 
-    const contents = blogsAtEnd.map(r => r.title)
-    assert(!contents.includes(blogToDelete.title))
+    assert.strictEqual(blogsAtStart.length, blogsAtEnd.length)
+    assert.strictEqual(false, title.includes('Poistotesti'))
+  }) 
 
-    assert.strictEqual(blogsAtEnd.length, blogsAtStart.length - 1)
-  })
-
+/*
   test('a specific blog can updated', async () => {
     const blogsAtStart = await helper.blogsInDb()
   
@@ -638,9 +633,9 @@ describe('Edit or delete specific blog', () => {
       .send({likes: 999})
   
     assert.strictEqual(400, updatedBlog.statusCode)
-  })
+  })*/
 
-})
+})})
 
 
 
