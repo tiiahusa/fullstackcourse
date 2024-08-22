@@ -2,6 +2,7 @@ import Note from './components/Note'
 import { useState, useEffect } from 'react'
 import noteService from './services/notes'
 import Notification from './components/Notification'
+import loginService from './services/login'
 
 const Footer = () => { //Elementti, jolle tyypimäärittelyt tehty suoraan elementin sisälle
   const footerStyle = {
@@ -28,6 +29,11 @@ const App = () => {
   ) 
   const [errorMessage, setErrorMessage] = useState(null)
 
+  //Kirjautuista varten
+  const [username, setUsername] = useState('') 
+  const [password, setPassword] = useState('')
+  const [user, setUser] = useState(null)
+
   /* Effect, jolla haetaan data tietokannasta
   useEffect(() => {
    // console.log('effect')
@@ -49,6 +55,16 @@ const App = () => {
       })
   }, [])
 
+  //Kirjautumistietojen muistamiseen selaimen uudelleenlataamisen yhteydessä
+  useEffect(() => {
+    const loggedUserJSON = window.localStorage.getItem('loggedNoteappUser')
+    if (loggedUserJSON) {
+      const user = JSON.parse(loggedUserJSON)
+      setUser(user)
+      noteService.setToken(user.token)
+    }
+  }, [])
+
   //Tilatieto, että näytetäänkö kaikki muistiinpanot vai vaan tärkeät
   const [showAll, setShowAll] = useState(true)
   // Saa parametrikseen event-tapahtumaolion ja siihen voidaan viitata/tehdä toimenpiteitä 
@@ -57,7 +73,28 @@ const App = () => {
     //console.log(event.target.value)
     setNewNote(event.target.value)
   }
-
+  //Kirjautuminen
+  const handleLogin = async (event) => {
+    event.preventDefault()
+    try {
+      console.log()
+      const user = await loginService.login({
+        username, password,
+      })
+      window.localStorage.setItem(
+        'loggedNoteappUser', JSON.stringify(user)
+      ) 
+      noteService.setToken(user.token)
+      setUser(user)
+      setUsername('')
+      setPassword('')
+    } catch (exception) {
+      setErrorMessage('wrong credentials')
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 5000)
+    }
+  }
   const addNote = (event) => {
     event.preventDefault()
     //Luodaan oliota vastaava komponentti noteObject, jolle poimitaan content-arvoksi 
@@ -84,6 +121,41 @@ const App = () => {
       setNewNote('')
     })
   }
+
+  const loginForm = () => (
+    <form onSubmit={handleLogin}>
+      <div>
+        username
+          <input
+          type="text"
+          value={username}
+          name="Username"
+          onChange={({ target }) => setUsername(target.value)}
+        />
+      </div>
+      <div>
+        password
+          <input
+          type="password"
+          value={password}
+          name="Password"
+          onChange={({ target }) => setPassword(target.value)}
+        />
+      </div>
+      <button type="submit">login</button>
+    </form>      
+  )
+
+  const noteForm = () => (
+    <form onSubmit={addNote}>
+      <input
+        value={newNote}
+        onChange={handleNoteChange}
+      />
+      <button type="submit">save</button>
+    </form>  
+  )
+
 
   //Muistiinpanon tärkeyden vaihto
   const toggleImportanceOf = (id) => {
@@ -131,6 +203,14 @@ const App = () => {
     <div>
       <h1>Notes</h1>
       <Notification message={errorMessage} />
+
+      {!user && loginForm()}
+      {user && <div>
+       <p>{user.name} logged in</p>
+         {noteForm()}
+      </div>
+      }
+
       <div>
         <button onClick={() => setShowAll(!showAll)}>
           show {showAll ? 'important' : 'all' /*Teksti sen mukaan, näytetäänkö kaikki vai vaan tärkeät*/ }
@@ -140,11 +220,7 @@ const App = () => {
         {notesToShow.map(note => 
           <Note key={note.id} note={note} toggleImportance={() => toggleImportanceOf(note.id)} />
         )}
-      </ul>
-      <form onSubmit={addNote}>
-        <input value={newNote} onChange={handleNoteChange /*Aina kun syötekomponentissa tapahtuu jotain*/}/>
-        <button type="submit">save</button>
-      </form>   
+      </ul>  
       <Footer />
     </div>
   )
