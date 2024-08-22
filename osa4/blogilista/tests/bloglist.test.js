@@ -325,7 +325,6 @@ describe('User login', () => {
       .post('/api/login')
       .send(userReg)
       .expect(401)
-
     assert.strictEqual('invalid username or password', user.body.error)
   })
 
@@ -456,7 +455,7 @@ describe('Blog adding', () => {
       .post('/api/blogs')
       .send(newBlog)
       .expect(401)
-
+      
     const response = await api.get('/api/blogs')
 
     assert.strictEqual(response.body.length, helper.initialBlogs.length)
@@ -604,6 +603,83 @@ describe('Edit or delete specific blog', () => {
     assert.strictEqual(blogsAtStart.length, blogsAtEnd.length)
     assert.strictEqual(false, title.includes('Poistotesti'))
   }) 
+
+    //Ei poisteta toisen lisäämää blogia
+    test('other user added blog cannot be deleted', async () => {
+      const blogsAtStart = await helper.blogsInDb()
+  
+        const newUser = {
+          username:"postingTest5",
+          name:"Poster5",
+          password:"userPassword"
+        }
+  
+        const userReg = {
+          username:"postingTest5",
+          password:"userPassword"
+        }
+
+        const newUser2 = {
+          username:"postingTest6",
+          name:"Poster6",
+          password:"userPassword"
+        }
+  
+        const userReg2 = {
+          username:"postingTest6",
+          password:"userPassword"
+        }
+    
+        await api
+          .post('/api/users')
+          .send(newUser)
+          .expect(201)
+          .expect('Content-Type', /application\/json/)
+    
+        const user = await api
+          .post('/api/login')
+          .send(userReg)
+          .expect(200)
+          .expect('Content-Type', /application\/json/)
+
+        await api
+          .post('/api/users')
+          .send(newUser2)
+          .expect(201)
+          .expect('Content-Type', /application\/json/)
+    
+        const user2 = await api
+          .post('/api/login')
+          .send(userReg2)
+          .expect(200)
+          .expect('Content-Type', /application\/json/)
+  
+      const token = `Bearer ${user.body.token}`
+      const token2 = `Bearer ${user2.body.token}`
+
+      const newBlog = {
+        author:"tiia",
+        title:"Poistotesti2",
+        url:"http://www.tiiantestia.com"
+      }
+  
+      const sendedBlog = await api
+        .post('/api/blogs')
+        .set('Authorization', token)
+        .send(newBlog)
+        .expect(201)
+  
+      await api
+        .delete(`/api/blogs/${sendedBlog.body.id}`)
+        .set('Authorization', token2)
+        .expect(401)
+  
+      const blogsAtEnd = await helper.blogsInDb()
+      const title = blogsAtEnd.map(r => r.title)
+  
+      assert.strictEqual(blogsAtStart.length+1, blogsAtEnd.length)
+      assert.strictEqual(true, title.includes('Poistotesti2'))
+    }) 
 
 /*
   test('a specific blog can updated', async () => {
