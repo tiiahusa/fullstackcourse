@@ -11,6 +11,10 @@ const App = () => {
   const [user, setUser] = useState(null)
   const [errorMessage, setErrorMessage] = useState(null)
 
+  const [title, setTitle] = useState('')
+  const [author, setAuthor] = useState('')
+  const [url, setUrl] = useState('')
+
   useEffect(() => {
     blogService.getAll().then(blogs =>
       setBlogs( blogs )
@@ -48,6 +52,26 @@ const App = () => {
     }
   }
 
+  const createPost = async (event) => {  
+    try {
+      const blog = await blogService.create({
+        title: title,
+        author: author,
+        url: url
+      })
+      console.log(blog)
+      setTitle('')
+      setAuthor('')
+      setUrl('')
+    } catch (exception) {
+      setErrorMessage('creating failed')
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 5000)
+    }
+    event.preventDefault()
+  }
+
   const loginForm = () => (
     <form onSubmit={handleLogin}>
       <h1>log in to the application</h1>
@@ -80,7 +104,39 @@ const App = () => {
       <button onClick={() => {
         window.localStorage.clear()
         setUser(null)}}>Logout</button>
-        <h1></h1>
+      <h1></h1>
+
+      <form onSubmit={createPost}>
+      <h1>create new</h1>
+      <div>
+        title:
+          <input
+          type="text"
+          value={title}
+          name="Utitle"
+          onChange={({ target }) => setTitle(target.value)}
+        />
+      </div>
+      <div>
+        author:
+          <input
+          type="text"
+          value={author}
+          name="Author"
+          onChange={({ target }) => setAuthor(target.value)}
+        />
+      </div>
+      <div>
+        url:
+          <input
+          type="text"
+          value={url}
+          name="Url"
+          onChange={({ target }) => setUrl(target.value)}
+        />
+      </div>
+      <button type="submit">create</button>
+    </form>
     {blogs.map(blog =>
       <Blog key={blog.id} blog={blog} />
     )} 
