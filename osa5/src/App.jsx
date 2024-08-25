@@ -17,12 +17,11 @@ const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  const [loginVisible, setLoginVisible] = useState(false)
 
   const blogFormRef = useRef()
 
   useEffect(() => {
-    blogService.getAll().then(blogs =>
+    blogService.getAll().then(blogs => 
       setBlogs( blogs )
     )  
   }, [])
@@ -58,89 +57,20 @@ const App = () => {
       }, 5000)
     }
   }
-  const addBlog = (blogObject) => {
+  const addBlog = async (blogObject) => {
     blogFormRef.current.toggleVisibility()
     blogService
       .create(blogObject)
+      .then(blogObject.preventDefault())
+  }
+
+  const updateBlog = async (blogObject) => {
+    blogService
+      .update(blogObject)
       .then(returnedBlog => {
-        setBlogs(blogs.concat(returnedBlog))
+        setBlogs(returnedBlog)
       })
   }
-  /*
-  const createPost = async (event) => {  
-    event.preventDefault()
-    try {
-      const blog = await blogService.create({
-        title: title,
-        author: author,
-        url: url
-      })
-      setTitle('')
-      setAuthor('')
-      setUrl('')
-      setNotification(`a new blog ${blog.title} added`)
-      setNotificationType('info')
-      setTimeout(() => {
-        setNotification(null)
-        setNotificationType(null)
-      }, 5000)
-    } catch (exception) {
-      setNotification('blog creating failed')
-      setNotificationType('error')
-      setTimeout(() => {
-        setNotification(null)
-      }, 5000)
-    }
-    
-  }
-
-  const loginForm2 = () => (
-    <form onSubmit={handleLogin}>
-      <h1>log in to the application</h1>
-      <div>
-        username
-          <input
-          type="text"
-          value={username}
-          name="Username"
-          onChange={({ target }) => setUsername(target.value)}
-        />
-      </div>
-      <div>
-        password
-          <input
-          type="password"
-          value={password}
-          name="Password"
-          onChange={({ target }) => setPassword(target.value)}
-        />
-      </div>
-      <button type="submit">login</button>
-    </form>      
-  )
-
-  const loginForm = () => {
-    const hideWhenVisible = { display: loginVisible ? 'none' : '' }
-    const showWhenVisible = { display: loginVisible ? '' : 'none' }
-
-    return (
-      <div>
-        <div style={hideWhenVisible}>
-          <button onClick={() => setLoginVisible(true)}>log in</button>
-        </div>
-        <div style={showWhenVisible}>
-          <LoginForm
-            username={username}
-            password={password}
-            handleUsernameChange={({ target }) => setUsername(target.value)}
-            handlePasswordChange={({ target }) => setPassword(target.value)}
-            handleSubmit={handleLogin}
-          />
-          <button onClick={() => setLoginVisible(false)}>cancel</button>
-        </div>
-      </div>
-    )
-  }*/
 
   const loggedIn = () => (
     <div>
@@ -154,7 +84,7 @@ const App = () => {
   const blogList = () => (
     <div>
     {blogs.map(blog =>
-      <Blog key={blog.id} blog={blog} />
+      <Blog key={blog.id} blog={blog} update={updateBlog} />
     )} 
     </div>
   )
@@ -176,6 +106,7 @@ const App = () => {
       {user &&<Toggable buttonLabelOn="new blog" buttonLabelOf="cancel" ref={blogFormRef}>
         <BlogForm
           createBlog={addBlog}
+          
         />
       </Toggable>}
       <Notification message={notification} type={notificationType} />

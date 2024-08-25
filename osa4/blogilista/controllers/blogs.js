@@ -51,18 +51,22 @@ blogsRouter.get('/', async (request, response) => {
     return response.status(401).json({ error: 'user cannot delete blog'})
   })
 
-  blogsRouter.put('/:id', async (request, response, next) => {
-    const { likes } = request.body
-    Blog.findByIdAndUpdate(
+  blogsRouter.put('/:id', middleware.tokenExtractor, async (request, response, next) => {
+    const blog = request.body
+    await Blog.findByIdAndUpdate(
       request.params.id,
-      {likes},
+      {
+        user: blog.user.id,
+        name: blog.name,
+        author: blog.author,
+        url: blog.url,
+        likes: blog.likes+1
+      },
       { new: true, runValidators: true, context: 'query' })
+    const blogs = await Blog
+        .find({}).populate('user', { username: 1, name: 1 })
+    return response.status(202).json(blogs)
 
-      .then(updatedBlog => {
-        response.status(202).json(updatedBlog)
-      })
-      .catch(error => next(error))
-      .catch(error => next(error))
   })
 
   module.exports = blogsRouter
