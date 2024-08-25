@@ -1,8 +1,11 @@
+import { useState, useEffect, useRef } from 'react'
 import Note from './components/Note'
-import { useState, useEffect } from 'react'
-import noteService from './services/notes'
 import Notification from './components/Notification'
+import noteService from './services/notes'
 import loginService from './services/login'
+import LoginForm from './components/LoginForm'
+import Togglable from './components/Togglable'
+import NoteForm from './components/NoteForm'
 
 const Footer = () => { //Elementti, jolle tyypimäärittelyt tehty suoraan elementin sisälle
   const footerStyle = {
@@ -23,17 +26,15 @@ const Footer = () => { //Elementti, jolle tyypimäärittelyt tehty suoraan eleme
 const App = () => {
   //Ensin tyhjä taulukko
   const [notes, setNotes] = useState([])
-  //Luodaan newNote, joka myöhemmin lisätään lomakkeen alkuarvoksi
-  const [newNote, setNewNote] = useState(
-    'a new note...'
-  ) 
   const [errorMessage, setErrorMessage] = useState(null)
 
   //Kirjautuista varten
   const [username, setUsername] = useState('') 
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
+  const [loginVisible, setLoginVisible] = useState(false)
 
+  const noteFormRef = useRef()
   /* Effect, jolla haetaan data tietokannasta
   useEffect(() => {
    // console.log('effect')
@@ -73,11 +74,12 @@ const App = () => {
     //console.log(event.target.value)
     setNewNote(event.target.value)
   }
+
+  
   //Kirjautuminen
   const handleLogin = async (event) => {
     event.preventDefault()
     try {
-      console.log()
       const user = await loginService.login({
         username, password,
       })
@@ -95,15 +97,16 @@ const App = () => {
       }, 5000)
     }
   }
-  const addNote = (event) => {
-    event.preventDefault()
+  const addNote = (noteObject) => {
+    noteFormRef.current.toggleVisibility()
+    //event.preventDefault()
     //Luodaan oliota vastaava komponentti noteObject, jolle poimitaan content-arvoksi 
-    //Lomakkeeseen kirjoitettu arvo
+    /*Lomakkeeseen kirjoitettu arvo
     const noteObject = {
       content: newNote,
       important: Math.random() > 0.5
     }
-  /*Lisätään uusi olio notes-taulukkoon concatia käyttämällä
+  Lisätään uusi olio notes-taulukkoon concatia käyttämällä
     setNotes(notes.concat(noteObject))
     //Tyhjennetään lomakekenttä
     setNewNote('')
@@ -118,34 +121,31 @@ const App = () => {
     .create(noteObject)
     .then(returnedNotes => {
       setNotes(notes.concat(returnedNotes))
-      setNewNote('')
     })
   }
 
-  const loginForm = () => (
-    <form onSubmit={handleLogin}>
+  const loginForm = () => {
+    const hideWhenVisible = { display: loginVisible ? 'none' : '' }
+    const showWhenVisible = { display: loginVisible ? '' : 'none' }
+    return (
       <div>
-        username
-          <input
-          type="text"
-          value={username}
-          name="Username"
-          onChange={({ target }) => setUsername(target.value)}
-        />
+        <div style={hideWhenVisible}>
+          <button onClick={() => setLoginVisible(true)}>log in</button>
+        </div>
+        <div style={showWhenVisible}>
+          <LoginForm
+            username={username}
+            password={password}
+            handleUsernameChange={({ target }) => setUsername(target.value)}
+            handlePasswordChange={({ target }) => setPassword(target.value)}
+            handleSubmit={handleLogin}
+          />
+          <button onClick={() => setLoginVisible(false)}>cancel</button>
+        </div>
       </div>
-      <div>
-        password
-          <input
-          type="password"
-          value={password}
-          name="Password"
-          onChange={({ target }) => setPassword(target.value)}
-        />
-      </div>
-      <button type="submit">login</button>
-    </form>      
-  )
-
+    )
+  }
+/* Tämä siirretty omaan komponenttiin
   const noteForm = () => (
     <form onSubmit={addNote}>
       <input
@@ -154,7 +154,7 @@ const App = () => {
       />
       <button type="submit">save</button>
     </form>  
-  )
+  )*/
 
 
   //Muistiinpanon tärkeyden vaihto
@@ -189,7 +189,8 @@ const App = () => {
         setTimeout(() => { //Timeout viestille 5 sekuntia
           setErrorMessage(null) //Tämän jälkeen viesti muutetaan null:iksi
         }, 5000)
-        setNotes(notes.filter(n => n.id !== id)) //Poistetaan virheen aiheuttanut note filteröimällä taulukko niin, että ko. id puuttuu siitä
+        //Alla olevaa ei enää tarvita koska käytetään effectiä
+        //setNotes(notes.filter(n => n.id !== id)) //Poistetaan virheen aiheuttanut note filteröimällä taulukko niin, että ko. id puuttuu siitä
       })
   }
 
@@ -207,20 +208,28 @@ const App = () => {
       {!user && loginForm()}
       {user && <div>
        <p>{user.name} logged in</p>
-         {noteForm()}
+       <Togglable buttonLabel='new note' ref={noteFormRef}>
+        <NoteForm
+          createNote={addNote}
+        />
+      </Togglable>
       </div>
-      }
+     } 
 
       <div>
         <button onClick={() => setShowAll(!showAll)}>
-          show {showAll ? 'important' : 'all' /*Teksti sen mukaan, näytetäänkö kaikki vai vaan tärkeät*/ }
+          show {showAll ? 'important' : 'all' }
         </button>
-      </div>
+      </div>      
       <ul>
         {notesToShow.map(note => 
-          <Note key={note.id} note={note} toggleImportance={() => toggleImportanceOf(note.id)} />
+          <Note
+            key={note.id}
+            note={note}
+            toggleImportance={() => toggleImportanceOf(note.id)}
+          />
         )}
-      </ul>  
+      </ul>
       <Footer />
     </div>
   )

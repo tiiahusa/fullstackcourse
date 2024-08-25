@@ -1,7 +1,7 @@
 import { useState } from 'react'
 
 const NoteForm = ({ createNote }) => {
-  const [newNote, setNewNote] = useState('')
+  const [newNote, setNewNote] = useState('') //Noten tilan hallinta siirretty Appista tänne
 
   const addNote = (event) => {
     event.preventDefault()

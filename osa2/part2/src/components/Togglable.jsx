@@ -1,6 +1,6 @@
 import { useState, useImperativeHandle, forwardRef } from 'react'
 
-const Togglable = forwardRef((props, ref) => {
+const Togglable = forwardRef((props, ref) => { //Komponenttien ruudulla näyttämisen hallinta
   const [visible, setVisible] = useState(false)
 
   const hideWhenVisible = { display: visible ? 'none' : '' }
