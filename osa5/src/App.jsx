@@ -22,7 +22,7 @@ const App = () => {
 
   useEffect(() => {
     blogService.getAll().then(blogs => 
-      setBlogs( blogs )
+      setBlogs( blogs.sort((a, b) => b.likes - a.likes) )
     )  
   }, [])
 
@@ -59,17 +59,15 @@ const App = () => {
   }
   const addBlog = async (blogObject) => {
     blogFormRef.current.toggleVisibility()
-    blogService
+    const newBlog = await blogService
       .create(blogObject)
-      .then(blogObject.preventDefault())
+    setBlogs(blogs.concat(newBlog).sort((a, b) => b.likes - a.likes))
   }
 
   const updateBlog = async (blogObject) => {
-    blogService
+    const returnedBlog = await blogService
       .update(blogObject)
-      .then(returnedBlog => {
-        setBlogs(returnedBlog)
-      })
+    setBlogs(returnedBlog.sort((a, b) => b.likes - a.likes))
   }
 
   const loggedIn = () => (
