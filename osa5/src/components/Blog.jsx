@@ -1,10 +1,15 @@
 import Togglable from "./Toggable"
 
-const Blog = ({ blog, update }) => {
+const Blog = ({ blog, update, remove }) => {
 
   const updateBlog = (event) => {
     event.preventDefault()
     update(blog)
+  }
+
+  const removeBlog = (event) => {
+    event.preventDefault()
+    remove(blog)
   }
   return (
     <div className="blog">
@@ -14,11 +19,12 @@ const Blog = ({ blog, update }) => {
       <Togglable buttonLabelOn="view" buttonLabelOff="hide">
         <div>
           <p>{blog.url}</p>
-          <p>{blog.author}</p>
           <p>
             Likes {blog.likes}
             <button onClick={updateBlog}>like</button>
           </p>
+          <p>{blog.author}</p>
+          <button onClick={removeBlog} className="remove">remove</button>
         </div>
       </Togglable>
     </div>

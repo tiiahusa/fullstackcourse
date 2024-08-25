@@ -70,6 +70,20 @@ const App = () => {
     setBlogs(returnedBlog.sort((a, b) => b.likes - a.likes))
   }
 
+  const removeBlog = async (blogObject) => {
+    const result = confirm(`Remove blog ${blogObject.name} by ${blogObject.author}?`)
+    if(result) {
+      const status = await blogService
+        .remove(blogObject)
+      if(status == 204) {
+        setBlogs(blogs)
+        console.log(blogs)
+      }
+      //setBlogs(returnedBlog.sort((a, b) => b.likes - a.likes))
+    }
+
+  }
+
   const loggedIn = () => (
     <div>
       <p>{user.name} logged in</p>
@@ -82,7 +96,7 @@ const App = () => {
   const blogList = () => (
     <div>
     {blogs.map(blog =>
-      <Blog key={blog.id} blog={blog} update={updateBlog} />
+      <Blog key={blog.id} blog={blog} update={updateBlog} remove={removeBlog} />
     )} 
     </div>
   )
