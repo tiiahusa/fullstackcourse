@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import Blog from './components/Blog'
-import blogService from './services/blogs'
 import Notification from './components/Notification'
+import blogService from './services/blogs'
 import loginService from './services/login'
 
 const App = () => {
@@ -11,6 +11,8 @@ const App = () => {
   const [user, setUser] = useState(null)
   const [notification, setNotification] = useState(null)
   const [notificationType, setNotificationType] = useState(null)
+
+  const [loginVisible, setLoginVisible] = useState(false)
 
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
@@ -107,6 +109,29 @@ const App = () => {
     </form>      
   )
 
+  const loginForm = () => {
+    const hideWhenVisible = { display: loginVisible ? 'none' : '' }
+    const showWhenVisible = { display: loginVisible ? '' : 'none' }
+
+    return (
+      <div>
+        <div style={hideWhenVisible}>
+          <button onClick={() => setLoginVisible(true)}>log in</button>
+        </div>
+        <div style={showWhenVisible}>
+          <LoginForm
+            username={username}
+            password={password}
+            handleUsernameChange={({ target }) => setUsername(target.value)}
+            handlePasswordChange={({ target }) => setPassword(target.value)}
+            handleSubmit={handleLogin}
+          />
+          <button onClick={() => setLoginVisible(false)}>cancel</button>
+        </div>
+      </div>
+    )
+  }
+
   const blogList = () => (
     <div>
       <h1>blogs</h1>
@@ -156,7 +181,23 @@ const App = () => {
   return (
     <div>
       {!user && loginForm()}
-      <Notification message={notification} type={notificationType} />
+      <Togglable buttonLabel='login'>
+  <LoginForm
+    username={username}
+    password={password}
+    handleUsernameChange={({ target }) => setUsername(target.value)}
+    handlePasswordChange={({ target }) => setPassword(target.value)}
+    handleSubmit={handleLogin}
+  />
+</Togglable>
+<Notification message={notification} type={notificationType} />
+<Togglable buttonLabel="new note">
+  <NoteForm
+    onSubmit={addNote}
+    value={newNote}
+    handleChange={handleNoteChange}
+  />
+</Togglable>
       {user && <div>
          {blogList()}
       </div>}
