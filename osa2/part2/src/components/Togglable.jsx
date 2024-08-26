@@ -1,4 +1,5 @@
 import { useState, useImperativeHandle, forwardRef } from 'react'
+import PropTypes from 'prop-types' //Buttolabelin pakollisuuden määrittelyyn
 
 const Togglable = forwardRef((props, ref) => { //Komponenttien ruudulla näyttämisen hallinta
   const [visible, setVisible] = useState(false)
@@ -29,5 +30,10 @@ const Togglable = forwardRef((props, ref) => { //Komponenttien ruudulla näyttä
     </div>
   )
 })
+Togglable.displayName = 'Togglable'
+
+Togglable.propTypes = { //Määritellään buttonLabel pakolliseksi
+  buttonLabel: PropTypes.string.isRequired
+}
 
 export default Togglable

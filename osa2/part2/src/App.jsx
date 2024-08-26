@@ -29,7 +29,7 @@ const App = () => {
   const [errorMessage, setErrorMessage] = useState(null)
 
   //Kirjautuista varten
-  const [username, setUsername] = useState('') 
+  const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   const [loginVisible, setLoginVisible] = useState(false)
@@ -68,14 +68,14 @@ const App = () => {
 
   //Tilatieto, että näytetäänkö kaikki muistiinpanot vai vaan tärkeät
   const [showAll, setShowAll] = useState(true)
-  // Saa parametrikseen event-tapahtumaolion ja siihen voidaan viitata/tehdä toimenpiteitä 
+  // Saa parametrikseen event-tapahtumaolion ja siihen voidaan viitata/tehdä toimenpiteitä
   //tapahtumakäsittelijän sisällä
-  const handleNoteChange = (event) => {
+  /*const handleNoteChange = (event) => {
     //console.log(event.target.value)
     setNewNote(event.target.value)
-  }
+  }*/
 
-  
+
   //Kirjautuminen
   const handleLogin = async (event) => {
     event.preventDefault()
@@ -85,7 +85,7 @@ const App = () => {
       })
       window.localStorage.setItem(
         'loggedNoteappUser', JSON.stringify(user)
-      ) 
+      )
       noteService.setToken(user.token)
       setUser(user)
       setUsername('')
@@ -100,7 +100,7 @@ const App = () => {
   const addNote = (noteObject) => {
     noteFormRef.current.toggleVisibility()
     //event.preventDefault()
-    //Luodaan oliota vastaava komponentti noteObject, jolle poimitaan content-arvoksi 
+    //Luodaan oliota vastaava komponentti noteObject, jolle poimitaan content-arvoksi
     /*Lomakkeeseen kirjoitettu arvo
     const noteObject = {
       content: newNote,
@@ -116,12 +116,12 @@ const App = () => {
       setNotes(notes.concat(response.data))
       setNewNote('')
     })*/
-   //Sama moduulin kautta:
+    //Sama moduulin kautta:
     noteService
-    .create(noteObject)
-    .then(returnedNotes => {
-      setNotes(notes.concat(returnedNotes))
-    })
+      .create(noteObject)
+      .then(returnedNotes => {
+        setNotes(notes.concat(returnedNotes))
+      })
   }
 
   const loginForm = () => {
@@ -145,7 +145,7 @@ const App = () => {
       </div>
     )
   }
-/* Tämä siirretty omaan komponenttiin
+  /* Tämä siirretty omaan komponenttiin
   const noteForm = () => (
     <form onSubmit={addNote}>
       <input
@@ -153,7 +153,7 @@ const App = () => {
         onChange={handleNoteChange}
       />
       <button type="submit">save</button>
-    </form>  
+    </form>
   )*/
 
 
@@ -164,10 +164,10 @@ const App = () => {
     const url = `http://localhost:3001/notes/${id}` //Poimitaan oikea id käsiteltäväksi
     const note = notes.find(n => n.id === id)  //Etsitään sillä oikea muistiinpano
     const changedNote = { ...note, important: !note.important } //Luodaan uusi olio, joka on muuten samanlainen, mutta important kenttä muuttuu päinvastaiseksi
-    //Operaatio siis luo uuden taulukon vanhan taulukon perusteella. 
-    //Jokainen uuden taulukon alkio luodaan ehdollisesti siten, että jos ehto note.id !== id on tosi, 
-    //otetaan uuteen taulukkoon suoraan vanhan taulukon kyseinen alkio. 
-    //Jos ehto on epätosi eli kyseessä on muutettu muistiinpano, otetaan uuteen taulukkoon 
+    //Operaatio siis luo uuden taulukon vanhan taulukon perusteella.
+    //Jokainen uuden taulukon alkio luodaan ehdollisesti siten, että jos ehto note.id !== id on tosi,
+    //otetaan uuteen taulukkoon suoraan vanhan taulukon kyseinen alkio.
+    //Jos ehto on epätosi eli kyseessä on muutettu muistiinpano, otetaan uuteen taulukkoon
     //palvelimen palauttama olio. Tämä on PUT-metodin käyttöä, voidaan tehdä myös PATCH-metodilla niin
     //että korvataan ainoastaan muuttuvan id:n tiedot
     axios.put(url, changedNote).then(response => {
@@ -177,7 +177,7 @@ const App = () => {
     //Tärkeyden asetus moduulia käyttäen
     const note = notes.find(n => n.id === id)
     const changedNote = { ...note, important: !note.important }
-  
+
     noteService
       .update(id, changedNote).then(returnedNote => {
         setNotes(notes.map(note => note.id !== id ? note : returnedNote))
@@ -197,8 +197,8 @@ const App = () => {
   //Määrittää, mitkä notet näytetään, ehtolauseke showAll
   //Jos ehto tosi, valitaan ? notes, muuten : notes.filter(note => note.important === true)
   const notesToShow = showAll
-  ? notes
-  : notes.filter(note => note.important === true) //filteröidään ne joiden important arvo = true
+    ? notes
+    : notes.filter(note => note.important === true) //filteröidään ne joiden important arvo = true
 
   return (
     <div>
@@ -207,22 +207,22 @@ const App = () => {
 
       {!user && loginForm()}
       {user && <div>
-       <p>{user.name} logged in</p>
-       <Togglable buttonLabel='new note' ref={noteFormRef}>
-        <NoteForm
-          createNote={addNote}
-        />
-      </Togglable>
+        <p>{user.name} logged in</p>
+        <Togglable buttonLabel='new note' ref={noteFormRef}>
+          <NoteForm
+            createNote={addNote}
+          />
+        </Togglable>
       </div>
-     } 
+      }
 
       <div>
         <button onClick={() => setShowAll(!showAll)}>
           show {showAll ? 'important' : 'all' }
         </button>
-      </div>      
+      </div>
       <ul>
-        {notesToShow.map(note => 
+        {notesToShow.map(note =>
           <Note
             key={note.id}
             note={note}
@@ -235,4 +235,4 @@ const App = () => {
   )
 }
 
-export default App 
+export default App

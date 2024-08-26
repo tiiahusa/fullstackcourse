@@ -34,12 +34,12 @@ const update = (id, newObject) => {
   return request.then(response => response.data)
 }
 
-export default { 
-    //Olion kenttä : olion muuttuja
-  //getAll: getAll, 
-  //create: create, 
-  //update: update 
+export default {
+  //Olion kenttä : olion muuttuja
+  //getAll: getAll,
+  //create: create,
+  //update: update
   //Koska ne on samat, voidaan lyhentää myös näin:
   getAll, create, update, setToken
- 
+
 }

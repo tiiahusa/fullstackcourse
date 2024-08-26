@@ -8,7 +8,7 @@ import './index.css'
   .then(response => {
     const notes = response.data
     console.log(notes)
-    
+
   })*/
 
 //const promise2 = axios.get('http://localhost:3001/foobar')
