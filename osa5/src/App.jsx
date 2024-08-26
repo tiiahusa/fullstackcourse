@@ -21,9 +21,9 @@ const App = () => {
   const blogFormRef = useRef()
 
   useEffect(() => {
-    blogService.getAll().then(blogs => 
+    blogService.getAll().then(blogs =>
       setBlogs( blogs.sort((a, b) => b.likes - a.likes) )
-    )  
+    )
   }, [])
 
   useEffect(() => {
@@ -43,7 +43,7 @@ const App = () => {
       })
       window.localStorage.setItem(
         'loggedBloglistUser', JSON.stringify(user)
-      ) 
+      )
       blogService.setToken(user.token)
       setUser(user)
       setUsername('')
@@ -75,9 +75,9 @@ const App = () => {
     if(result) {
       const status = await blogService
         .remove(blogObject)
-      if(status == 204) {
+      if(status === 204) {
         setBlogs(blogs.filter(blog => blog.id !== blogObject.id))
-      } 
+      }
     }
   }
 
@@ -92,9 +92,9 @@ const App = () => {
 
   const blogList = () => (
     <div>
-    {blogs.map(blog =>
-      <Blog key={blog.id} blog={blog} update={updateBlog} remove={removeBlog} user={user} />
-    )} 
+      {blogs.map(blog =>
+        <Blog key={blog.id} blog={blog} update={updateBlog} remove={removeBlog} user={user} />
+      )}
     </div>
   )
 
@@ -115,14 +115,14 @@ const App = () => {
       {user &&<Toggable buttonLabelOn="new blog" buttonLabelOf="cancel" ref={blogFormRef}>
         <BlogForm
           createBlog={addBlog}
-          
+
         />
       </Toggable>}
       <Notification message={notification} type={notificationType} />
       {user && <div>
-         {blogList()}
+        {blogList()}
       </div>}
-      
+
 
 
     </div>

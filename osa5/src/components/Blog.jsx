@@ -1,6 +1,6 @@
-import Togglable from "./Toggable"
+import Togglable from './Toggable'
 
-const Blog = ({ blog, update, remove, user}) => {
+const Blog = ({ blog, update, remove, user }) => {
 
   const updateBlog = (event) => {
     event.preventDefault()
@@ -12,7 +12,7 @@ const Blog = ({ blog, update, remove, user}) => {
     remove(blog)
   }
 
-  const userAdd = blog.user.username == user.username
+  const userAdd = blog.user.username === user.username
 
   return (
     <div className="blog">
@@ -30,8 +30,8 @@ const Blog = ({ blog, update, remove, user}) => {
           {
             userAdd &&
               <button onClick={removeBlog} className="remove">remove</button>
-            }
-          
+          }
+
         </div>
       </Togglable>
     </div>
