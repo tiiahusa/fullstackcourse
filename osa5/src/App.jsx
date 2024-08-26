@@ -76,12 +76,9 @@ const App = () => {
       const status = await blogService
         .remove(blogObject)
       if(status == 204) {
-        setBlogs(blogs)
-        console.log(blogs)
-      }
-      //setBlogs(returnedBlog.sort((a, b) => b.likes - a.likes))
+        setBlogs(blogs.filter(blog => blog.id !== blogObject.id))
+      } 
     }
-
   }
 
   const loggedIn = () => (
@@ -96,7 +93,7 @@ const App = () => {
   const blogList = () => (
     <div>
     {blogs.map(blog =>
-      <Blog key={blog.id} blog={blog} update={updateBlog} remove={removeBlog} />
+      <Blog key={blog.id} blog={blog} update={updateBlog} remove={removeBlog} user={user} />
     )} 
     </div>
   )
