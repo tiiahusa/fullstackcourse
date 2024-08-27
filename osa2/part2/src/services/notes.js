@@ -7,12 +7,12 @@ const setToken = newToken => {
 }
 const getAll = () => {
   const request = axios.get(baseUrl)
-  const nonExisting = {
+ /* const nonExisting = {
     id: 10000,
     content: 'This note is not saved to server',
     important: true,
-  }
-  return request.then(response => response.data.concat(nonExisting))
+  }*/
+  return request.then(response => response.data) //.concat(nonExisting))
   //return request.then(response => response.data)
   /* ylempi lyhennys seuraavasta:
     return request.then(response => {
