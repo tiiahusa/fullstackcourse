@@ -101,7 +101,7 @@ const App = () => {
   return (
     <div>
       <h1>Blogs</h1>
-      {!user && <Toggable buttonLabelOn='login' buttonLabelOff="cancel">
+      {!user && <Toggable buttonLabelOn='login' buttonLabelOff='cancel'>
         <LoginForm
           username={username}
           password={password}
@@ -112,7 +112,7 @@ const App = () => {
       </Toggable>}
       {user && <div>
         {loggedIn()} </div>}
-      {user &&<Toggable buttonLabelOn="new blog" buttonLabelOf="cancel" ref={blogFormRef}>
+      {user &&<Toggable buttonLabelOn="new blog" buttonLabelOff="cancel" ref={blogFormRef}>
         <BlogForm
           createBlog={addBlog}
 

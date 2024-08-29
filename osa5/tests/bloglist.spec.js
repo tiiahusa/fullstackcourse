@@ -95,7 +95,6 @@ describe('Blog can be removed', () => {
 
         const element = await page.getByText('the first blog title').locator('..') 
         await element.getByRole('button', { name: 'view' }).click() 
-        expect(element.getByRole('button', { name: 'remove' })).toBeVisible()
         await element.getByRole('button', { name: 'remove' }).click()
         page.once('dialog', dialog => {
             console.log(`Dialog message: ${dialog.message()}`)
