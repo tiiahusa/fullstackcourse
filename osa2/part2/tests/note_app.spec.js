@@ -62,21 +62,6 @@ describe('Note app', () => {
             await loginWith(page, 'tiuhti', 'salainen')
         })
 
-        describe('and several notes exists', () => {
-            beforeEach(async ({ page }) => {
-              await createNote(page, 'first note xxx')
-              await createNote(page, 'second note xxx')
-            })
-        
-            test('one of those can be made nonimportant', async ({ page }) => {
-                const otherNoteText = await page.getByText('first note')
-                const otherdNoteElement = await otherNoteText.locator('..')
-              await otherNoteElement
-                .getByRole('button', { name: 'make not important' }).click()
-              await expect(otherNoteElement.getByText('make important')).toBeVisible()
-            })
-          }) 
-    
         test('a new note can be created', async ({ page }) => {
           await createNote(page, 'a note created by playwright')
            /* //Painetaan new note buttonia, siirretty omaan moduuliin helper.js
@@ -88,6 +73,22 @@ describe('Note app', () => {
           //Tsekataan, että muistiinpano löytyy
           await expect(page.getByText('a note created by playwright')).toBeVisible()
         })
+
+        describe('and several notes exists', () => {
+            beforeEach(async ({ page }) => {
+              await createNote(page, 'first note xxx')
+              await createNote(page, 'second note xxx')
+              await createNote(page, 'third note xxx')
+            })
+        
+            test('one of those can be made nonimportant', async ({ page }) => {
+              const secondNoteElement = await page.getByText('second note').locator('..') // Etsitään elementin second note parent
+              await secondNoteElement.getByRole('button', { name: 'make not important' }).click() //Ja sitten etsitään siitä parentista button-elementti jota klikataan
+              await expect(secondNoteElement.getByText('make important')).toBeVisible()
+            })
+          })
+    
+
 /*
         describe('and a note exists', () => {
             beforeEach(async ({ page }) => {
