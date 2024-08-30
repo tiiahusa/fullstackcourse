@@ -1,9 +1,9 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 
-import { createStore } from 'redux'
+import { createStore } from 'redux' //Yliviivattu, koska "vanhentuva metodi", joka ei tämän metodin kohdalla pidä paikkaansa
 
-const counterReducer = (state = 0, action) => {
+const counterReducer = (state = 0, action) => { //Reducerin action, tilan muuttaja
   switch (action.type) {
     case 'INCREMENT':
       return state + 1
@@ -22,7 +22,7 @@ const App = () => {
   return (
     <div>
       <div>
-        {store.getState()}
+        {store.getState() }
       </div>
       <button 
         onClick={e => store.dispatch({ type: 'INCREMENT' })}
@@ -43,4 +43,11 @@ const App = () => {
   )
 }
 
-export default App
+const root = ReactDOM.createRoot(document.getElementById('root'))
+
+const renderApp = () => {
+  root.render(<App />)
+}
+
+renderApp()
+store.subscribe(renderApp)
