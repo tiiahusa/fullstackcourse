@@ -6,7 +6,7 @@ const AnecdoteList = () => {
         if ( state.filter === '' ) {
           return state.anecdotes
         }
-        return state.anecdotes.filter(anec => anec.content.toLowerCase().contains(state.filter.toLowerCase()))
+        return state.anecdotes .filter(anec => anec.content.toLowerCase().includes(state.filter.toLowerCase()))
       })
     const dispatch = useDispatch()
   

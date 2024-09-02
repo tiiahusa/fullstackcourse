@@ -6,7 +6,6 @@ const FilterForm = () => {
     const dispatch = useDispatch()
 
     const addFilter = (event) => {
-        console.log("Filteröintiin tullaan")
         event.preventDefault()
         const anecdote = event.target.value
         dispatch(filterChange(anecdote))
