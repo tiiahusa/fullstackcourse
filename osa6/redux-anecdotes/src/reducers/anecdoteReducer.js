@@ -20,10 +20,38 @@ const asObject = (anecdote) => {
 const initialState = anecdotesAtStart.map(asObject)
 
 const reducer = (state = initialState, action) => {
-  console.log('state now: ', state)
-  console.log('action', action)
+  switch(action.type) {
+    case 'ADDNEW':
+      return [...state, action.payload.anecdote].sort((a, b) => b.votes - a.votes)
+    case 'VOTE':
+      const id = action.payload.id //Poimitaan oikea id
+      const anecdote = state.find(n => n.id === id) //Etsitään sen perusteella anekdootti
 
-  return state
+      const changed = {
+        ...anecdote,
+        votes: anecdote.votes+1
+      }
+      return state.map(anec => //Mennään state läpi ja asetetaan muutettu nykyisen tilalle
+        anec.id !== id ? anec : changed
+      ).sort((a, b) => b.votes - a.votes)
+    default:
+      return state.sort((a, b) => b.votes - a.votes)
+  }
 }
+
+export const voteAnecdote = (id) => { 
+  return {
+    type: 'VOTE',
+    payload: { id }
+  }
+}  
+
+export const newAnecdote = (text) => {
+  const anecdote = asObject(text) 
+  return {
+    type: 'ADDNEW',
+    payload: { anecdote }
+  }
+}  
 
 export default reducer

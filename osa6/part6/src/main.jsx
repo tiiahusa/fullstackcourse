@@ -9,7 +9,8 @@ import noteReducer from './reducers/noteReducer'
 
 const store = createStore(noteReducer)
 
-ReactDOM.createRoot(document.getElementById('root')).render(
+ReactDOM.createRoot(document.getElementById('root')).render( //sovellus on määritelty React Redux ‑kirjaston tarjoaman Provider-komponentin lapsena 
+  //ja että sovelluksen käyttämä store on annettu Provider-komponentin attribuutiksi store
   <Provider store={store}>
     <App />
   </Provider>

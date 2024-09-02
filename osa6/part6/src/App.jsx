@@ -1,15 +1,19 @@
-import { createNote, toggleImportanceOf } from './reducers/noteReducer'
-import { useSelector, useDispatch } from 'react-redux'
+import Notes from "./components/Notes"
+import NewNote from "./components/NewNote"
 
 const App = () => {
+
+  /* Ennen Notes.jsx tekoa:
   const dispatch = useDispatch()
-  const notes = useSelector(state => state)
+  const notes = useSelector(state => state) // storeen tallennettuihin muistiiinpanoihin pääsee käsiksi useSelector kirjaston kautta
+  // Tärkeät muistiinpanot voisi hakea esim näin:
+  //const importantNotes = useSelector(state => state.filter(note => note.important)) 
 
   const addNote = (event) => {
     event.preventDefault()
-    const content = event.target.note.value
-    event.target.note.value = ''
-    dispatch(createNote(content))
+    const content = event.target.note.value // poiimitaan note nimisen kentän arvo (eli alempana input kenttä)
+    event.target.note.value = '' //Tyhjätään note-kentän arvo
+    dispatch(createNote(content)) //Luodaan note reducerin avulla
   }
 
   const toggleImportance = (id) => {
@@ -18,10 +22,7 @@ const App = () => {
 
   return(
     <div>
-      <form onSubmit={addNote}>
-        <input name="note" /> 
-        <button type="submit">add</button>
-      </form>
+
       <ul>
         {notes.map(note=>
           <li key={note.id} onClick={() => toggleImportance(note.id)}>
@@ -31,6 +32,14 @@ const App = () => {
         </ul>
     </div>
   )
+}*/
+
+return (
+  <div>
+    <NewNote />
+    <Notes />
+  </div>
+)
 }
 
 export default App
