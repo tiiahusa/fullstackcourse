@@ -36,7 +36,7 @@ const noteSlice = createSlice({
         ...noteToChange, 
         important: !noteToChange.important 
       }
-      console.log(JSON.parse(JSON.stringify(state)))
+      console.log(JSON.parse(JSON.stringify(state))) //Muista parsia JSONiksi että saat jotain ihmisluettavaa aikaiseksi
       return state.map(note =>
         note.id !== id ? note : changedNote 
       )     
