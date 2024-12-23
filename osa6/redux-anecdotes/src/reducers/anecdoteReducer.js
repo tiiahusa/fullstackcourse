@@ -37,13 +37,13 @@ const anecdoteSlice = createSlice({
         ...anecdote,
         votes: anecdote.votes+1
       }
+      console.log(JSON.parse(JSON.stringify(state)))
       return state.map(anec => //Mennään state läpi ja asetetaan muutettu nykyisen tilalle
         anec.id !== id ? anec : changed
       ).sort((a, b) => b.votes - a.votes)
     }
   }
-}
-)
+})
 
 export const { createAnecdote, voteAnecdote } = anecdoteSlice.actions
 export default anecdoteSlice.reducer

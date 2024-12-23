@@ -8,8 +8,8 @@ const AnecdoteForm = () => {
         event.preventDefault()
         const anecdote = event.target.newAnecdote.value
         event.target.newAnecdote.value = ''
-        dispatch({ type: 'anecdotes/createAnecdote', payload: anecdote})
-      }
+        dispatch(createAnecdote(anecdote))
+    }
 
     return(
         <div>

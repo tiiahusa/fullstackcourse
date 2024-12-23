@@ -13,7 +13,7 @@ const FilterForm = () => {
 
     return(
         <p>
-            filter <input name="addFilter" onInput={addFilter} />
+            filter <input name="filter" onInput={addFilter} />
         </p>
     )
 }
