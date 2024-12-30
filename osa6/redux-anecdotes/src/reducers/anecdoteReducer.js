@@ -24,7 +24,7 @@ const anecdoteSlice = createSlice({
       ).sort((a, b) => b.votes - a.votes)
     },
     setAnecdotes(state, action) {
-      return action.payload
+      return action.payload.sort((a, b) => b.votes - a.votes)
     }
   }
 })
@@ -40,9 +40,10 @@ export const addAnecdoteWithNotification = (content) => {
 }
 
 export const voteAnecdoteWithNotification = (anecdote) => {
-  return (dispatch, getState) => {
+  return async (dispatch, getState) => {
     dispatch(voteAnecdote(anecdote))
     const votedAnecdote = getState().anecdotes.find((anec) => anec.id === anecdote.id)
+    await anecdoteService.update(votedAnecdote.id, votedAnecdote)
     dispatch(showNotification(`You voted '${votedAnecdote.content}'`, 5000))
   }
 }
