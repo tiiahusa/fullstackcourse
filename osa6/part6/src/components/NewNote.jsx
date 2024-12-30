@@ -1,6 +1,6 @@
 import { useDispatch } from 'react-redux'
 import { createNote } from '../reducers/noteReducer'
-import noteService from '../services/notes'
+//import noteService from '../services/notes'
 
 
 const NewNote = () => {
@@ -10,8 +10,10 @@ const NewNote = () => {
         event.preventDefault()
         const content = event.target.note.value // poiimitaan note nimisen kentän arvo (eli alempana input kenttä)
         event.target.note.value = '' //Tyhjätään note-kentän arvo
-        const newNote = await noteService.createNew(content)
-        dispatch(createNote(newNote)) //Luodaan note reducerin avulla
+        /* Noteservicelläconst newNote = await noteService.createNew(content)
+        dispatch(createNote(newNote)) //Luodaan note reducerin avulla*/
+        //Vielä yksinkertaiemmin noteservice piilotettuna
+        dispatch(createNote(content))
     }
 
     return(

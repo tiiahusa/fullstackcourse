@@ -1,5 +1,6 @@
 //Redux toolkit
 import { createSlice } from '@reduxjs/toolkit'
+import noteService from '../services/notes'
 
 /*const initialState = [ Nämä siirretty omaan json tiedostoon, "tietokantaan"
   {
@@ -21,9 +22,9 @@ const noteSlice = createSlice({
   name: 'notes', //Määrittelee etuliitteen, jota käytetään actioneiden type-arvoissa => esim notes/createNote
   initialState: [], //Määrittelee alustavan tilan
   reducers: { //Määrittelee itse reducerin objektina, eli reducerin funktiot kirjoitetaan tähän
-    createNote(state, action) {
-      state.push(action.payload)
-    },
+    //createNote(state, action) { Siirretty alas thunkiksi
+    //  state.push(action.payload)
+    //},
     toggleImportanceOf(state, action) {
       const id = action.payload
       const noteToChange = state.find(n => n.id === id)
@@ -45,7 +46,23 @@ const noteSlice = createSlice({
   },
 })
 
-export const { createNote, toggleImportanceOf, appendNote, setNotes } = noteSlice.actions
+export const { toggleImportanceOf, appendNote, setNotes } = noteSlice.actions
+
+//Asynkroonisten funktioiden toteuttamiseen storessa
+export const initializeNotes = () => {
+  return async dispatch => {
+    const notes = await noteService.getAll()
+    dispatch(setNotes(notes))
+  }
+}
+
+export const createNote = content => {
+  return async dispatch => {
+    const newNote = await noteService.createNew(content)
+    dispatch(appendNote(newNote))
+  }
+}
+
 export default noteSlice.reducer
 /* Ilman redux toolkitiä
 const noteReducer = (state = initialState, action) => {

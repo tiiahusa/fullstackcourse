@@ -2,14 +2,14 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 
 //import { createStore, combineReducers } from 'redux' //Reducereiden käyttöön
-import { configureStore } from '@reduxjs/toolkit' //Redux-storen käyttöön parempi(=laajempi) kirjasto kuin ylempi
+//import { configureStore } from '@reduxjs/toolkit' //Redux-storen käyttöön parempi(=laajempi) kirjasto kuin ylempi
 import { Provider } from 'react-redux'
-
+import store from './store'
 import App from './App'
-import filterReducer from './reducers/filterReducer'
+//import filterReducer from './reducers/filterReducer'
 
 //import noteService from './services/notes'
-import noteReducer from './reducers/noteReducer'
+//import noteReducer from './reducers/noteReducer'
 
 /*
 Storen luontia ilman reduxjs toolkitiä
@@ -18,14 +18,16 @@ const reducer = combineReducers({ //Yhdistetään reducerit tämän avulla
   filter: filterReducer
 })
 
-const store = createStore(reducer)*/
+const store = createStore(reducer)
+
+Tämä siirrettiin omaan store.jsx-tiedostoon mainin siistimiseksi.
 const store = configureStore({
   reducer: {
     notes: noteReducer,
     filter: filterReducer
   }
 }, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()) //Chromen Redux DevTools -lisäosaa varten
-console.log(store.getState())
+console.log(store.getState())*/
 
 /*Haetaan muistiinpanot , tämä siirrettiin myöhemmin App komponenttiin
 noteService.getAll().then(notes =>
