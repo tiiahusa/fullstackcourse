@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
+import { showNotification } from './notificationReducer'
 
 const anecdotesAtStart = [
   'If it hurts, do it more often',
@@ -26,8 +27,9 @@ const anecdoteSlice = createSlice({
   initialState,
   reducers: {
     createAnecdote(state, action) {
-      const anecdote = asObject(action.payload.anecdote)
-      state.push(anecdote).sort((a, b) => b.votes - a.votes)
+      const anecdote = asObject(action.payload)
+      state.push(anecdote)
+      state.sort((a, b) => b.votes - a.votes)
     },
     voteAnecdote(state, action) {
       const id = action.payload.id //Poimitaan oikea id
@@ -46,42 +48,21 @@ const anecdoteSlice = createSlice({
 })
 
 export const { createAnecdote, voteAnecdote } = anecdoteSlice.actions
-export default anecdoteSlice.reducer
 
-/*
-const reducer = (state = initialState, action) => {
-  switch(action.type) {
-    case 'ADDNEW':
-      return [...state, action.payload.anecdote].sort((a, b) => b.votes - a.votes)
-    case 'VOTE':
-      const id = action.payload.id //Poimitaan oikea id
-      const anecdote = state.find(n => n.id === id) //Etsitään sen perusteella anekdootti
-
-      const changed = {
-        ...anecdote,
-        votes: anecdote.votes+1
-      }
-      return state.map(anec => //Mennään state läpi ja asetetaan muutettu nykyisen tilalle
-        anec.id !== id ? anec : changed
-      ).sort((a, b) => b.votes - a.votes)
-    default:
-      return state.sort((a, b) => b.votes - a.votes)
+export const addAnecdoteWithNotification = (content) => {
+  return (dispatch) => {
+    dispatch(createAnecdote(content))
+    dispatch(showNotification(`You added a new anecdote: "${content}"`, 5000))
   }
 }
 
-export const voteAnecdote = (id) => { 
-  return {
-    type: 'VOTE',
-    payload: { id }
+export const voteAnecdoteWithNotification = (anecdote) => {
+  return (dispatch, getState) => {
+    dispatch(voteAnecdote(anecdote))
+    const votedAnecdote = getState().anecdotes.find((anec) => anec.id === anecdote.id)
+    dispatch(showNotification(`You voted '${votedAnecdote.content}'`, 5000))
   }
-}  
+}
 
-export const newAnecdote = (text) => {
-  const anecdote = asObject(text) 
-  return {
-    type: 'ADDNEW',
-    payload: { anecdote }
-  }
-}  
+export default anecdoteSlice.reducer
 
-export default reducer*/
