@@ -1,7 +1,7 @@
 //Redux toolkit
 import { createSlice } from '@reduxjs/toolkit'
 
-const initialState = [
+/*const initialState = [ Nämä siirretty omaan json tiedostoon, "tietokantaan"
   {
     content: 'reducer defines how redux store works',
     important: true,
@@ -12,22 +12,17 @@ const initialState = [
     important: false,
     id: 2,
   },
-]
-
-const generateId = () =>
-  Number((Math.random() * 1000000).toFixed(0))
+]*/
+//Tarpeeton nyt kun service generoi id:n
+//const generateId = () =>
+//  Number((Math.random() * 1000000).toFixed(0))
 
 const noteSlice = createSlice({
   name: 'notes', //Määrittelee etuliitteen, jota käytetään actioneiden type-arvoissa => esim notes/createNote
-  initialState, //Määrittelee alustavan tilan
+  initialState: [], //Määrittelee alustavan tilan
   reducers: { //Määrittelee itse reducerin objektina, eli reducerin funktiot kirjoitetaan tähän
     createNote(state, action) {
-      const content = action.payload
-      state.push({ //Pushia voidaan käyttää createslice-funktiossa
-        content,
-        important: false,
-        id: generateId(),
-      })
+      state.push(action.payload)
     },
     toggleImportanceOf(state, action) {
       const id = action.payload
@@ -40,11 +35,17 @@ const noteSlice = createSlice({
       return state.map(note =>
         note.id !== id ? note : changedNote 
       )     
+    },
+    appendNote(state, action) {
+      state.push(action.payload)
+    },
+    setNotes(state, action) {
+      return action.payload
     }
   },
 })
 
-export const { createNote, toggleImportanceOf } = noteSlice.actions
+export const { createNote, toggleImportanceOf, appendNote, setNotes } = noteSlice.actions
 export default noteSlice.reducer
 /* Ilman redux toolkitiä
 const noteReducer = (state = initialState, action) => {
