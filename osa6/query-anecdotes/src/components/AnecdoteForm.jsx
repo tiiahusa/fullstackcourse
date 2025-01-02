@@ -1,10 +1,10 @@
-const AnecdoteForm = () => {
+const AnecdoteForm = ( props ) => {
 
   const onCreate = (event) => {
     event.preventDefault()
     const content = event.target.anecdote.value
     event.target.anecdote.value = ''
-    console.log('new anecdote')
+    props.addAnecdote(content)
 }
 
   return (
