@@ -2,20 +2,27 @@ import AnecdoteForm from './components/AnecdoteForm'
 import Notification from './components/Notification'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { getAnecdotes, createAnecdote, voteAnecdote } from './services/anecdoteService'
+import { useNotificationDispatch } from './NotificationContext'
 
 const App = () => {
   const queryClient = useQueryClient()
+  const showNotification = useNotificationDispatch()
 
   const newAnecdoteMutation = useMutation({ 
     mutationFn: createAnecdote,
-    onSuccess: () => {
+    onSuccess: (newAnecdote) => {
+      showNotification(`Anecdote '${newAnecdote.content}' created`)
       queryClient.invalidateQueries({ queryKey: ['anecdotes'] })
     },
+    onError: (err) => {
+      showNotification('too short anecdote, must have length 5 or more')
+    }
   })
 
   const voteAnecdoteMutation = useMutation({
     mutationFn: voteAnecdote,
-    onSuccess: () => { 
+    onSuccess: (newAnecdote) => { 
+      showNotification(`Anecdote '${newAnecdote.content}' voted`)
       queryClient.invalidateQueries({ queryKey: ['anecdotes'] }) // Invalidointi aiheuttaa sovelluksen datan päivityksen
     },
   })
@@ -38,7 +45,7 @@ const App = () => {
     queryFn: getAnecdotes, 
     retry: 1
   })
-  console.log(JSON.parse(JSON.stringify(result)))
+  //console.log(JSON.parse(JSON.stringify(result)))
 
   const anecdotes = result.data
 
