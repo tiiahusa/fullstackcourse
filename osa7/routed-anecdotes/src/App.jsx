@@ -1,23 +1,28 @@
 import { useState } from 'react'
 
-const Menu = () => {
-  const padding = {
-    paddingRight: 5
-  }
-  return (
-    <div>
-      <a href='#' style={padding}>anecdotes</a>
-      <a href='#' style={padding}>create new</a>
-      <a href='#' style={padding}>about</a>
-    </div>
-  )
-}
+import {
+  Routes,
+  Route,
+  Link,
+  useMatch,
+  useNavigate
+} from "react-router-dom"
+
+const Anecdote = ({ anecdote }) => (
+  <div>
+    <h2>{anecdote.content} by {anecdote.author}</h2>
+    <ul>
+      <li>has {anecdote.votes} votes</li>
+      <li>for more info see <a href={anecdote.info}>{anecdote.info}</a></li>
+    </ul>
+  </div>
+)
 
 const AnecdoteList = ({ anecdotes }) => (
   <div>
     <h2>Anecdotes</h2>
     <ul>
-      {anecdotes.map(anecdote => <li key={anecdote.id} >{anecdote.content}</li>)}
+      {anecdotes.map(anecdote => <li key={anecdote.id} ><Link to={`anecdotes/${anecdote.id}`}>{anecdote.content}</Link></li>)}
     </ul>
   </div>
 )
@@ -48,7 +53,7 @@ const CreateNew = (props) => {
   const [content, setContent] = useState('')
   const [author, setAuthor] = useState('')
   const [info, setInfo] = useState('')
-
+  const navigate = useNavigate()
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -58,10 +63,13 @@ const CreateNew = (props) => {
       info,
       votes: 0
     })
+    props.showNotification({content})
+    navigate('/')
   }
 
   return (
     <div>
+      
       <h2>create a new anecdote</h2>
       <form onSubmit={handleSubmit}>
         <div>
@@ -101,7 +109,17 @@ const App = () => {
     }
   ])
 
+  const match = useMatch('/anecdotes/:id')
+  const anecdote = match 
+    ? anecdotes.find(anecdote => anecdote.id === Number(match.params.id))
+    : null
+
   const [notification, setNotification] = useState('')
+
+  const showNotification = (msg) => {
+    setNotification(msg.content)
+    setTimeout(() => setNotification(''), 5000)
+  }
 
   const addNew = (anecdote) => {
     anecdote.id = Math.round(Math.random() * 10000)
@@ -122,13 +140,31 @@ const App = () => {
     setAnecdotes(anecdotes.map(a => a.id === id ? voted : a))
   }
 
+  const padding = {
+    paddingRight: 5
+  }
+
   return (
     <div>
       <h1>Software anecdotes</h1>
-      <Menu />
-      <AnecdoteList anecdotes={anecdotes} />
-      <About />
-      <CreateNew addNew={addNew} />
+      <div>
+        <div>
+          <Link style={padding} to="/">anecdotes</Link>
+          <Link style={padding} to="/create">create new</Link>
+          <Link style={padding} to="/info">about</Link>
+        </div>
+        {notification && (
+          <div>
+            a new anecdote {notification} created!
+          </div>
+        )}
+        <Routes>
+          <Route path="/" element={<AnecdoteList anecdotes={anecdotes} />} />
+          <Route path="/create" element={<CreateNew addNew={addNew} showNotification={showNotification}/>} />
+          <Route path="/info" element={<About />} />
+          <Route path="/anecdotes/:id" element={<Anecdote anecdote={anecdote} />} />
+        </Routes>
+      </div>     
       <Footer />
     </div>
   )
