@@ -12,6 +12,7 @@
     "format": "prettier --write ."
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.64.2",
     "axios": "^1.4.0",
     "bloglist-frontend": "file:",
     "prop-types": "^15.8.1",

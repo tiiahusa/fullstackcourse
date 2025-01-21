@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useReducer } from 'react'
 
 import Blog from './components/Blog'
 import Notification from './components/Notification'
@@ -9,9 +9,20 @@ import Toggable from './components/Toggable'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
+const notificationReducer = (state, action) => {
+  if (length(action.type) > 0) {
+    return action.type
+  }
+  return null
+}
+
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  const [notification, setNotification] = useState(null)
+  //const [notification, setNotification] = useState(null)
+  const [notification, notificationDispach] = useReducer(
+    notificationReducer,
+    null,
+  )
   const [notificationType, setNotificationType] = useState(null)
 
   const [username, setUsername] = useState('')
@@ -48,10 +59,10 @@ const App = () => {
       setUsername('')
       setPassword('')
     } catch (exception) {
-      setNotification('wrong credentials')
+      notificationDispach('wrong credentials')
       setNotificationType('error')
       setTimeout(() => {
-        setNotification(null)
+        notificationDispach(null)
         setNotificationType(null)
       }, 5000)
     }
