@@ -8,20 +8,40 @@ const useField = (type) => {
     setValue(event.target.value)
   }
 
+  const reset = () => {
+    setValue('')
+  }
+
   return {
     type,
     value,
-    onChange
+    onChange,
+    reset
   }
 }
 
 const useResource = (baseUrl) => {
   const [resources, setResources] = useState([])
 
-  // ...
+  useEffect(() => {
+    const fetchResources = async () => {
+      if (baseUrl) {
+        setResources(await getAll())
+      }
+    }
 
-  const create = (resource) => {
-    // ...
+    fetchResources();
+  }, [baseUrl])
+
+  const getAll = async () => {
+    const response = await axios.get(baseUrl)
+    return response.data
+  }
+
+  const create = async (resource) => {
+    const response = await axios.post(baseUrl, resource)
+    setResources(await getAll())
+    return response.data
   }
 
   const service = {
@@ -34,9 +54,10 @@ const useResource = (baseUrl) => {
 }
 
 const App = () => {
-  const content = useField('text')
-  const name = useField('text')
-  const number = useField('text')
+  //const { reset: resetContent, ...content } = useField('text');
+  const { reset: resetContent, ...content }  = useField('text')
+  const { reset: resetName, ...name }  = useField('text')
+  const { reset: resetNumber, ...number }  = useField('text')
 
   const [notes, noteService] = useResource('http://localhost:3005/notes')
   const [persons, personService] = useResource('http://localhost:3005/persons')
@@ -44,11 +65,14 @@ const App = () => {
   const handleNoteSubmit = (event) => {
     event.preventDefault()
     noteService.create({ content: content.value })
+    resetContent()
   }
  
   const handlePersonSubmit = (event) => {
     event.preventDefault()
     personService.create({ name: name.value, number: number.value})
+    resetName()
+    resetNumber()
   }
 
   return (
