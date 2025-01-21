@@ -22,13 +22,18 @@ const errorHandler = (error, request, response, next) => {
     return response.status(400).send({ error: 'malformatted id' })
   } else if (error.name === 'ValidationError') {
     return response.status(400).json({ error: error.message })
-  } else if (error.name === 'MongoServerError' && error.message.includes('E11000 duplicate key error')) {
-    return response.status(400).json({ error: 'expected `username` to be unique' })
-  } else if (error.name ===  'JsonWebTokenError') {
+  } else if (
+    error.name === 'MongoServerError' &&
+    error.message.includes('E11000 duplicate key error')
+  ) {
+    return response
+      .status(400)
+      .json({ error: 'expected `username` to be unique' })
+  } else if (error.name === 'JsonWebTokenError') {
     return response.status(400).json({ error: 'token missing or invalid' })
   } else if (error.name === 'TokenExpiredError') {
     return response.status(401).json({
-      error: 'token expired'
+      error: 'token expired',
     })
   }
 
@@ -38,11 +43,11 @@ const errorHandler = (error, request, response, next) => {
 const tokenExtractor = async (request, response, next) => {
   const authorization = request.get('Authorization')
   if (!authorization) {
-    return response.status(401).json({ error: 'token missing'})
+    return response.status(401).json({ error: 'token missing' })
   }
   if (authorization && authorization.startsWith('Bearer ')) {
     request.token = await authorization.replace('Bearer ', '')
-  } 
+  }
   next()
 }
 
@@ -51,7 +56,7 @@ const userExtractor = async (request, response, next) => {
 
   if (!decodedToken.id) {
     return response.status(401).json({ error: 'token invalid' })
-  }   
+  }
   request.user = await User.findById(decodedToken.id)
   next()
 }
@@ -61,5 +66,5 @@ module.exports = {
   unknownEndpoint,
   errorHandler,
   tokenExtractor,
-  userExtractor
+  userExtractor,
 }

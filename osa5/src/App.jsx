@@ -21,9 +21,9 @@ const App = () => {
   const blogFormRef = useRef()
 
   useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs( blogs.sort((a, b) => b.likes - a.likes) )
-    )
+    blogService
+      .getAll()
+      .then((blogs) => setBlogs(blogs.sort((a, b) => b.likes - a.likes)))
   }, [])
 
   useEffect(() => {
@@ -39,11 +39,10 @@ const App = () => {
     event.preventDefault()
     try {
       const user = await loginService.login({
-        username, password,
+        username,
+        password,
       })
-      window.localStorage.setItem(
-        'loggedBloglistUser', JSON.stringify(user)
-      )
+      window.localStorage.setItem('loggedBloglistUser', JSON.stringify(user))
       blogService.setToken(user.token)
       setUser(user)
       setUsername('')
@@ -59,24 +58,23 @@ const App = () => {
   }
   const addBlog = async (blogObject) => {
     blogFormRef.current.toggleVisibility()
-    const newBlog = await blogService
-      .create(blogObject)
+    const newBlog = await blogService.create(blogObject)
     setBlogs(blogs.concat(newBlog).sort((a, b) => b.likes - a.likes))
   }
 
   const updateBlog = async (blogObject) => {
-    const returnedBlog = await blogService
-      .update(blogObject)
+    const returnedBlog = await blogService.update(blogObject)
     setBlogs(returnedBlog.sort((a, b) => b.likes - a.likes))
   }
 
   const removeBlog = async (blogObject) => {
-    const result = confirm(`Remove blog ${blogObject.name} by ${blogObject.author}?`)
-    if(result) {
-      const status = await blogService
-        .remove(blogObject)
-      if(status === 204) {
-        setBlogs(blogs.filter(blog => blog.id !== blogObject.id))
+    const result = confirm(
+      `Remove blog ${blogObject.name} by ${blogObject.author}?`,
+    )
+    if (result) {
+      const status = await blogService.remove(blogObject)
+      if (status === 204) {
+        setBlogs(blogs.filter((blog) => blog.id !== blogObject.id))
       }
     }
   }
@@ -84,47 +82,57 @@ const App = () => {
   const loggedIn = () => (
     <div>
       <p>{user.name} logged in</p>
-      <button onClick={() => {
-        window.localStorage.clear()
-        setUser(null)}}>Logout</button>
+      <button
+        onClick={() => {
+          window.localStorage.clear()
+          setUser(null)
+        }}
+      >
+        Logout
+      </button>
     </div>
   )
 
   const blogList = () => (
     <div>
-      {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} update={updateBlog} remove={removeBlog} user={user} />
-      )}
+      {blogs.map((blog) => (
+        <Blog
+          key={blog.id}
+          blog={blog}
+          update={updateBlog}
+          remove={removeBlog}
+          user={user}
+        />
+      ))}
     </div>
   )
 
   return (
     <div>
       <h1>Blogs</h1>
-      {!user && <Toggable buttonLabelOn='login' buttonLabelOff='cancel'>
-        <LoginForm
-          username={username}
-          password={password}
-          handleUsernameChange={({ target }) => setUsername(target.value)}
-          handlePasswordChange={({ target }) => setPassword(target.value)}
-          handleSubmit={handleLogin}
-        />
-      </Toggable>}
-      {user && <div>
-        {loggedIn()} </div>}
-      {user &&<Toggable buttonLabelOn="new blog" buttonLabelOff="cancel" ref={blogFormRef}>
-        <BlogForm
-          createBlog={addBlog}
-
-        />
-      </Toggable>}
+      {!user && (
+        <Toggable buttonLabelOn="login" buttonLabelOff="cancel">
+          <LoginForm
+            username={username}
+            password={password}
+            handleUsernameChange={({ target }) => setUsername(target.value)}
+            handlePasswordChange={({ target }) => setPassword(target.value)}
+            handleSubmit={handleLogin}
+          />
+        </Toggable>
+      )}
+      {user && <div>{loggedIn()} </div>}
+      {user && (
+        <Toggable
+          buttonLabelOn="new blog"
+          buttonLabelOff="cancel"
+          ref={blogFormRef}
+        >
+          <BlogForm createBlog={addBlog} />
+        </Toggable>
+      )}
       <Notification message={notification} type={notificationType} />
-      {user && <div>
-        {blogList()}
-      </div>}
-
-
-
+      {user && <div>{blogList()}</div>}
     </div>
   )
 }

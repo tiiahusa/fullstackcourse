@@ -6,12 +6,12 @@ describe('BlogForm', () => {
   it('calls createBlog with correct details when a new blog is created', () => {
     const createBlog = vi.fn()
 
-    const component = render(
-      <BlogForm createBlog={createBlog} />
-    )
+    const component = render(<BlogForm createBlog={createBlog} />)
 
     const titleInput = component.container.querySelector('input[name="Title"]')
-    const authorInput = component.container.querySelector('input[name="Author"]')
+    const authorInput = component.container.querySelector(
+      'input[name="Author"]',
+    )
     const urlInput = component.container.querySelector('input[name="Url"]')
     const form = component.container.querySelector('form')
 
@@ -24,7 +24,7 @@ describe('BlogForm', () => {
     expect(createBlog).toHaveBeenCalledWith({
       title: 'Test Title',
       author: 'Test Author',
-      url: 'http://testurl.com'
+      url: 'http://testurl.com',
     })
   })
 })

@@ -3,7 +3,6 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import Blog from './Blog'
 
-
 // Mock Togglable component
 vi.mock('./Toggable', () => {
   return {
@@ -16,7 +15,7 @@ vi.mock('./Toggable', () => {
           {children}
         </div>
       </div>
-    )
+    ),
   }
 })
 
@@ -27,21 +26,20 @@ describe('Blog component', () => {
     url: 'http://testurl.com',
     likes: 5,
     user: {
-      username: 'testuser'
-    }
+      username: 'testuser',
+    },
   }
 
   const user = {
-    username: 'testuser'
+    username: 'testuser',
   }
 
   const update = vi.fn()
   const remove = vi.fn()
-screen.debug()
+  screen.debug()
   test('renders title and author, but not url or likes by default', () => {
     render(<Blog blog={blog} update={update} remove={remove} user={user} />)
     expect(screen.getByText('Test Blog Title')).toBeDefined()
-
   })
 
   test('renders url, likes, and user when the view button is clicked', async () => {

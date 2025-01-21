@@ -1,7 +1,6 @@
 import Togglable from './Toggable'
 
 const Blog = ({ blog, update, remove, user }) => {
-
   const updateBlog = (event) => {
     event.preventDefault()
     update(blog)
@@ -16,9 +15,7 @@ const Blog = ({ blog, update, remove, user }) => {
 
   return (
     <div className="blog">
-      <p>
-        {blog.title}
-      </p>
+      <p>{blog.title}</p>
       <Togglable buttonLabelOn="view" buttonLabelOff="hide">
         <div>
           <p>{blog.url}</p>
@@ -27,18 +24,15 @@ const Blog = ({ blog, update, remove, user }) => {
             <button onClick={updateBlog}>like</button>
           </p>
           <p>{blog.author}</p>
-          {
-            userAdd &&
-              <button onClick={removeBlog} className="remove">remove</button>
-          }
-
+          {userAdd && (
+            <button onClick={removeBlog} className="remove">
+              remove
+            </button>
+          )}
         </div>
       </Togglable>
     </div>
   )
-
 }
-
-
 
 export default Blog
