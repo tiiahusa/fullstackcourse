@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useReducer, useContext } from 'react'
+import { useState, useEffect, useRef } from 'react'
 
 import Blog from './components/Blog'
 import Notification from './components/Notification'
@@ -9,7 +9,7 @@ import Toggable from './components/Toggable'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
-import NotificationContext from './NotificationContext'
+import { useNotificationDispatch } from './NotificationContext'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -18,7 +18,7 @@ const App = () => {
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
 
-  const [notification, notificationDispach] = useContext(NotificationContext)
+  const notificationDispach = useNotificationDispatch()
 
   const blogFormRef = useRef()
 
@@ -108,34 +108,32 @@ const App = () => {
   )
 
   return (
-    <NotificationContext.Provider value={[notification, notificationDispach]}>
-      <div>
-        <h1>Blogs</h1>
-        {!user && (
-          <Toggable buttonLabelOn="login" buttonLabelOff="cancel">
-            <LoginForm
-              username={username}
-              password={password}
-              handleUsernameChange={({ target }) => setUsername(target.value)}
-              handlePasswordChange={({ target }) => setPassword(target.value)}
-              handleSubmit={handleLogin}
-            />
-          </Toggable>
-        )}
-        {user && <div>{loggedIn()} </div>}
-        {user && (
-          <Toggable
-            buttonLabelOn="new blog"
-            buttonLabelOff="cancel"
-            ref={blogFormRef}
-          >
-            <BlogForm createBlog={addBlog} />
-          </Toggable>
-        )}
-        <Notification message={notification} />
-        {user && <div>{blogList()}</div>}
-      </div>
-    </NotificationContext.Provider>
+    <div>
+      <h1>Blogs</h1>
+      {!user && (
+        <Toggable buttonLabelOn="login" buttonLabelOff="cancel">
+          <LoginForm
+            username={username}
+            password={password}
+            handleUsernameChange={({ target }) => setUsername(target.value)}
+            handlePasswordChange={({ target }) => setPassword(target.value)}
+            handleSubmit={handleLogin}
+          />
+        </Toggable>
+      )}
+      {user && <div>{loggedIn()} </div>}
+      {user && (
+        <Toggable
+          buttonLabelOn="new blog"
+          buttonLabelOff="cancel"
+          ref={blogFormRef}
+        >
+          <BlogForm createBlog={addBlog} />
+        </Toggable>
+      )}
+      <Notification />
+      {user && <div>{blogList()}</div>}
+    </div>
   )
 }
 
