@@ -10,10 +10,14 @@ import blogService from './services/blogs'
 import loginService from './services/login'
 
 const notificationReducer = (state, action) => {
-  if (length(action.type) > 0) {
-    return action.type
+  switch (action.type) {
+    case 'ERROR':
+      return 'wrong credentials'
+    case 'RESET':
+      return null
+    default:
+      return state
   }
-  return null
 }
 
 const App = () => {
@@ -59,10 +63,11 @@ const App = () => {
       setUsername('')
       setPassword('')
     } catch (exception) {
-      notificationDispach('wrong credentials')
+      console.log('Tullaan virheeseen')
+      notificationDispach({ type: 'ERROR' })
       setNotificationType('error')
       setTimeout(() => {
-        notificationDispach(null)
+        notificationDispach({ type: 'RESET' })
         setNotificationType(null)
       }, 5000)
     }
