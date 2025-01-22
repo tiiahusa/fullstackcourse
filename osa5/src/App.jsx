@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useReducer } from 'react'
+import { useState, useEffect, useRef, useReducer, useContext } from 'react'
 
 import Blog from './components/Blog'
 import Notification from './components/Notification'
@@ -9,29 +9,16 @@ import Toggable from './components/Toggable'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
-const notificationReducer = (state, action) => {
-  switch (action.type) {
-    case 'ERROR':
-      return 'wrong credentials'
-    case 'RESET':
-      return null
-    default:
-      return state
-  }
-}
+import NotificationContext from './NotificationContext'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  //const [notification, setNotification] = useState(null)
-  const [notification, notificationDispach] = useReducer(
-    notificationReducer,
-    null,
-  )
-  const [notificationType, setNotificationType] = useState(null)
 
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
+
+  const [notification, notificationDispach] = useContext(NotificationContext)
 
   const blogFormRef = useRef()
 
@@ -63,12 +50,9 @@ const App = () => {
       setUsername('')
       setPassword('')
     } catch (exception) {
-      console.log('Tullaan virheeseen')
-      notificationDispach({ type: 'ERROR' })
-      setNotificationType('error')
+      notificationDispach({ type: 'error' })
       setTimeout(() => {
-        notificationDispach({ type: 'RESET' })
-        setNotificationType(null)
+        notificationDispach({ type: null })
       }, 5000)
     }
   }
@@ -124,32 +108,34 @@ const App = () => {
   )
 
   return (
-    <div>
-      <h1>Blogs</h1>
-      {!user && (
-        <Toggable buttonLabelOn="login" buttonLabelOff="cancel">
-          <LoginForm
-            username={username}
-            password={password}
-            handleUsernameChange={({ target }) => setUsername(target.value)}
-            handlePasswordChange={({ target }) => setPassword(target.value)}
-            handleSubmit={handleLogin}
-          />
-        </Toggable>
-      )}
-      {user && <div>{loggedIn()} </div>}
-      {user && (
-        <Toggable
-          buttonLabelOn="new blog"
-          buttonLabelOff="cancel"
-          ref={blogFormRef}
-        >
-          <BlogForm createBlog={addBlog} />
-        </Toggable>
-      )}
-      <Notification message={notification} type={notificationType} />
-      {user && <div>{blogList()}</div>}
-    </div>
+    <NotificationContext.Provider value={[notification, notificationDispach]}>
+      <div>
+        <h1>Blogs</h1>
+        {!user && (
+          <Toggable buttonLabelOn="login" buttonLabelOff="cancel">
+            <LoginForm
+              username={username}
+              password={password}
+              handleUsernameChange={({ target }) => setUsername(target.value)}
+              handlePasswordChange={({ target }) => setPassword(target.value)}
+              handleSubmit={handleLogin}
+            />
+          </Toggable>
+        )}
+        {user && <div>{loggedIn()} </div>}
+        {user && (
+          <Toggable
+            buttonLabelOn="new blog"
+            buttonLabelOff="cancel"
+            ref={blogFormRef}
+          >
+            <BlogForm createBlog={addBlog} />
+          </Toggable>
+        )}
+        <Notification message={notification} />
+        {user && <div>{blogList()}</div>}
+      </div>
+    </NotificationContext.Provider>
   )
 }
 

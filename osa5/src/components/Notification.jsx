@@ -1,9 +1,12 @@
-const Notification = (props) => {
-  if (props.message === null) {
+import { useNotificationValue, useNotificationDispatch } from '../NotificationContext'
+
+const Notification = () => {
+  const notification = useNotificationValue()
+  if (notification === null) {
     return null
   }
 
-  return <div className={props.type}>{props.message}</div>
+  return <div className={notification.type}>{notification.msg}</div>
 }
 
 export default Notification
