@@ -1,8 +1,16 @@
+import { useEffect, useState } from 'react'
 import Togglable from './Toggable'
 
 const Blog = ({ blog, update, remove, user }) => {
+  const [likes, setLikes] = useState(blog.likes)
+
+  useEffect(() => {
+    setLikes(blog.likes)
+  }, [blog.likes])
+
   const updateBlog = (event) => {
     event.preventDefault()
+    setLikes(blog.likes+1)
     update(blog)
   }
 

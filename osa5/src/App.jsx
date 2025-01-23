@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
 
-import Blog from './components/Blog'
 import Notification from './components/Notification'
 import LoginForm from './components/Login'
 import BlogForm from './components/BlogForm'
@@ -10,10 +9,9 @@ import blogService from './services/blogs'
 import loginService from './services/login'
 
 import { useNotificationDispatch } from './NotificationContext'
+import BlogList from './components/BlogList'
 
 const App = () => {
-  const [blogs, setBlogs] = useState([])
-
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
@@ -22,11 +20,6 @@ const App = () => {
 
   const blogFormRef = useRef()
 
-  useEffect(() => {
-    blogService
-      .getAll()
-      .then((blogs) => setBlogs(blogs.sort((a, b) => b.likes - a.likes)))
-  }, [])
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBloglistUser')
@@ -56,28 +49,6 @@ const App = () => {
       }, 5000)
     }
   }
-  const addBlog = async (blogObject) => {
-    blogFormRef.current.toggleVisibility()
-    const newBlog = await blogService.create(blogObject)
-    setBlogs(blogs.concat(newBlog).sort((a, b) => b.likes - a.likes))
-  }
-
-  const updateBlog = async (blogObject) => {
-    const returnedBlog = await blogService.update(blogObject)
-    setBlogs(returnedBlog.sort((a, b) => b.likes - a.likes))
-  }
-
-  const removeBlog = async (blogObject) => {
-    const result = confirm(
-      `Remove blog ${blogObject.name} by ${blogObject.author}?`,
-    )
-    if (result) {
-      const status = await blogService.remove(blogObject)
-      if (status === 204) {
-        setBlogs(blogs.filter((blog) => blog.id !== blogObject.id))
-      }
-    }
-  }
 
   const loggedIn = () => (
     <div>
@@ -90,20 +61,6 @@ const App = () => {
       >
         Logout
       </button>
-    </div>
-  )
-
-  const blogList = () => (
-    <div>
-      {blogs.map((blog) => (
-        <Blog
-          key={blog.id}
-          blog={blog}
-          update={updateBlog}
-          remove={removeBlog}
-          user={user}
-        />
-      ))}
     </div>
   )
 
@@ -128,11 +85,11 @@ const App = () => {
           buttonLabelOff="cancel"
           ref={blogFormRef}
         >
-          <BlogForm createBlog={addBlog} />
+          <BlogForm />
         </Toggable>
       )}
       <Notification />
-      {user && <div>{blogList()}</div>}
+      {user && <BlogList user={user}></BlogList>}
     </div>
   )
 }
