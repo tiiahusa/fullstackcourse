@@ -11,7 +11,9 @@
   "description": "",
   "dependencies": {
     "@apollo/server": "^4.11.3",
+    "dotenv": "^16.4.7",
     "graphql": "^16.10.0",
-    "library": "file:"
+    "library": "file:",
+    "mongoose": "^8.9.5"
   }
 }
