@@ -1,54 +1,50 @@
-import { ALL_BOOKS } from "../queries";
-import { useState } from 'react';
-import { useQuery } from '@apollo/client';
+import { ALL_BOOKS } from "../queries"
+import { useState } from 'react'
+import { useQuery } from '@apollo/client'
 
 const Books = (props) => {
-  const [genre, setGenre] = useState(null);
-  const [searchType, setSearchType] = useState(null);
+  const [genre, setGenre] = useState(null)
+  const [genreName, setGenreName] = useState('all books')
 
   const { loading, error, data } = useQuery(ALL_BOOKS, {
     variables: { genre },
     skip: !genre,
-  });
+  })
 
   if (!props.books) {
-    return null;
+    return null
   }
 
-  const books = genre ? data?.allBooks : props.books;
-  console.log(genre)
-  console.log(books)
-  console.log(data)
+  const books = genre ? data?.allBooks : props.books
 
   if (!books) {
-    return <p>Loading books...</p>;
+    return <p>Loading books...</p>
   }
 
-  const genres = ['all genres'];
-  for (let b of books) {
+  const genres = ['all genres']
+  for (let b of props.books) {
     for (let g of b.genres) {
       if (!genres.includes(g)) {
-        genres.push(g);
+        genres.push(g)
       }
     }
   }
 
   const findBooks = (genre) => {
+    setGenreName(genre)
     if (genre === 'all genres') {
-      setGenre(null);
-      setSearchType(null);
+      setGenre(null)
     } else {
-      setGenre(genre);
-      setSearchType('genre');
+      setGenre(genre)
     }
-  };
+  }
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error: {error.message}</p>;
+  if (loading) return <p>Loading...</p>
+  if (error) return <p>Error: {error.message}</p>
 
   return (
     <div>
-      <h2>books</h2>
+      <h2>books, genre: {genreName}</h2>
 
       <table>
         <tbody>
@@ -70,7 +66,7 @@ const Books = (props) => {
         <button key={g} onClick={() => findBooks(g)}>{g}</button>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default Books;
+export default Books

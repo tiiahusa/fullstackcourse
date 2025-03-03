@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react'
 import { useMutation } from '@apollo/client'
 import { LOGIN } from '../queries'
 
-const LoginForm = ({ setError, setToken }) => {
-  const [username, setUsername] = useState('mluukkai')
+const LoginForm = ({ setError, setToken, setGenre }) => {
+  const [username, setUsername] = useState('elina')
   const [password, setPassword] = useState('secret')
 
 
@@ -17,8 +17,10 @@ const LoginForm = ({ setError, setToken }) => {
   useEffect(() => {
     if ( result.data ) {
       const token = result.data.login.value
+      const genre = result.data.login.favoriteGenre
       setToken(token)
-      localStorage.setItem('phonenumbers-user-token', token)
+      setGenre(genre)
+      localStorage.setItem('library-user-token', token)
     }
   }, [result.data])
 

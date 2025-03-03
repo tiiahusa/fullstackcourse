@@ -10,7 +10,7 @@ import {
 } from '@apollo/client'
 
 const authLink = setContext((_, { headers }) => {
-  const token = localStorage.getItem('phonenumbers-user-token')
+  const token = localStorage.getItem('library-user-token')
   return {
     headers: {
       ...headers,

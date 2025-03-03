@@ -109,6 +109,7 @@ const typeDefs = `
   }
 
   type Token {
+    favoriteGenre: String!
     value: String!
   }
   
@@ -245,7 +246,6 @@ const resolvers = {
     },
     createUser: async (root, args) => {
       const user = new User({ ...args })
-      console.log("Tänne tullaanb")
       return user.save()
         .catch(error => {
           throw new GraphQLError('Creating the user failed', {
@@ -256,7 +256,6 @@ const resolvers = {
             }
           })
         })
-      console.log("Ja ilman erroria mennään")
     },
     login: async (root, args) => {
       const user = await User.findOne({ username: args.username })
@@ -272,7 +271,10 @@ const resolvers = {
         id: user._id,
       }
   
-      return { value: jwt.sign(userForToken, process.env.JWT_SECRET) }
+      return { 
+        favoriteGenre: user.favoriteGenre, 
+        value: jwt.sign(userForToken, process.env.JWT_SECRET) 
+      }
     }
   }
 }

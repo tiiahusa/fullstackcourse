@@ -7,6 +7,7 @@ import Books from "./components/Books";
 import NewBook from "./components/NewBook";
 import Notify from "./components/Notify";
 import LoginForm from "./components/LoginForm";
+import Recommend from "./components/Recommend"
 
 const App = () => {
   const [page, setPage] = useState("books")
@@ -14,6 +15,7 @@ const App = () => {
 
   const [errorMessage, setErrorMessage] = useState(null)
   const [token, setToken] = useState(null)
+  const [favoriteGenre, setFavoriteGenre] = useState(null)
   const client = useApolloClient()
 
   if (result.loading)  {
@@ -30,6 +32,7 @@ const App = () => {
 
   const logout = () => {
     setToken(null)
+    setFavoriteGenre(null)
     localStorage.clear()
     client.resetStore()
   }
@@ -38,8 +41,8 @@ const App = () => {
     return (
       <div>
         <Notify errorMessage={errorMessage} />
-        <LoginForm setToken={setToken} setError={notify} />
-        <Books books={result.data.allBooks} />
+        <LoginForm setToken={setToken} setError={notify} setGenre={setFavoriteGenre}/>
+       
       </div>
     )
   }
@@ -50,12 +53,13 @@ const App = () => {
         <button onClick={() => setPage("authors")}>authors</button>
         <button onClick={() => setPage("books")}>books</button>
         <button onClick={() => setPage("add")}>add book</button>
+        <button onClick={() => setPage("recommend")}>recommend</button>
       </div>
       <Notify errorMessage={errorMessage} />
       <button onClick={logout}>logout</button>
       <Authors show={page === "authors"} authors={result.data.allAuthors}/>
-
       <Books show={page === "books"} books={result.data.allBooks} />
+      <Recommend show={page === "recommend"} genre={favoriteGenre} />
 
       <NewBook show={page === "add"} />
     </div>
