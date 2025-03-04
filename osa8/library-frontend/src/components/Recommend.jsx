@@ -1,27 +1,18 @@
 import { ALL_BOOKS } from "../queries"
 import { useQuery } from '@apollo/client'
 
-const Recommend = ({ genre }) => {
-  const books = null
-
+const Recommend = ({ show, genre }) => {
   const { loading, error, data } = useQuery(ALL_BOOKS, {
-    variables: { genre },
-    skip: !genre,
+    variables: { genre }
   })
-  console.log(genre)
-  console.log(data)
   
-  if (!books || books == null) {
+  if (!data || !show) {
     return null
   }
 
   if (loading) return <p>Loading...</p>
   if (error) return <p>Error: {error.message}</p>
-  if (data) {
-    books = data.allBooks
-  }
   
-
   return (
     <div>
       <h2>recommendations</h2>
@@ -33,7 +24,7 @@ const Recommend = ({ genre }) => {
             <th>author</th>
             <th>published</th>
           </tr>
-          {books.map((a) => (
+          {data.allBooks.map((a) => (
             <tr key={a.title}>
               <td>{a.title}</td>
               <td>{a.author.name}</td>

@@ -22,7 +22,6 @@ const App = () => {
     return <div>loading...</div>
   }
 
-
   const notify = (message) => {
     setErrorMessage(message)
     setTimeout(() => {
@@ -42,28 +41,32 @@ const App = () => {
       <div>
         <Notify errorMessage={errorMessage} />
         <LoginForm setToken={setToken} setError={notify} setGenre={setFavoriteGenre}/>
-       
+        <Books books={result.data.allBooks} />
       </div>
     )
+  } else {
+    return (
+      <div>
+        <div>
+          <button onClick={() => setPage("authors")}>authors</button>
+          <button onClick={() => setPage("books")}>books</button>
+          <button onClick={() => setPage("add")}>add book</button>
+          <button onClick={() => setPage("recommend")}>recommend</button>
+        </div>
+        <div>
+          <Notify errorMessage={errorMessage} />
+          <button onClick={logout}>logout</button>
+          <Authors show={page === "authors"} authors={result.data.allAuthors}/>
+          <Recommend show={page === "recommend" } genre={favoriteGenre} />
+          <Books show={page === "books" || page === "add"} books={result.data.allBooks} />
+          <NewBook show={page === "add"} />
+        </div>
+
+      </div>
+    );
   }
 
-  return (
-    <div>
-      <div>
-        <button onClick={() => setPage("authors")}>authors</button>
-        <button onClick={() => setPage("books")}>books</button>
-        <button onClick={() => setPage("add")}>add book</button>
-        <button onClick={() => setPage("recommend")}>recommend</button>
-      </div>
-      <Notify errorMessage={errorMessage} />
-      <button onClick={logout}>logout</button>
-      <Authors show={page === "authors"} authors={result.data.allAuthors}/>
-      <Books show={page === "books"} books={result.data.allBooks} />
-      <Recommend show={page === "recommend"} genre={favoriteGenre} />
 
-      <NewBook show={page === "add"} />
-    </div>
-  );
 };
 
 export default App;

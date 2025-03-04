@@ -6,7 +6,6 @@ const LoginForm = ({ setError, setToken, setGenre }) => {
   const [username, setUsername] = useState('elina')
   const [password, setPassword] = useState('secret')
 
-
   const [ login, result ] = useMutation(LOGIN, {
     onError: (error) => {
       setError(error.graphQLErrors[0].message)
@@ -20,6 +19,7 @@ const LoginForm = ({ setError, setToken, setGenre }) => {
       const genre = result.data.login.favoriteGenre
       setToken(token)
       setGenre(genre)
+      localStorage.setItem('favoriteGenre', genre)
       localStorage.setItem('library-user-token', token)
     }
   }, [result.data])
