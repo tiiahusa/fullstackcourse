@@ -11,15 +11,15 @@ interface CalculateBMI {
       return {
         height: Number(args[2]),
         weight: Number(args[3])
-      }
+      };
     } else {
       throw new Error('Provided values were not numbers!');
     }
-  }
+  };
   
   const calculateBmi = (height: number, weight: number): string => {
-    let convertedHeight = height/100
-    let bmi = weight / (convertedHeight^2)
+    const convertedHeight = height/100;
+    const bmi = weight / (convertedHeight^2);
     switch(true) {
         case (bmi < 18.5):
             return "Under norman range";
@@ -32,13 +32,13 @@ interface CalculateBMI {
         default:
             return "Invalid BMI";
     }
-  }
+  };
   
   try {
     const { height, weight } = parseBMIArguments(process.argv);
-    console.log(calculateBmi(height, weight))
+    console.log(calculateBmi(height, weight));
   } catch (error: unknown) {
-    let errorMessage = 'Something bad happened.'
+    let errorMessage = 'Something bad happened.';
     if (error instanceof Error) {
       errorMessage += ' Error: ' + error.message;
     }

@@ -28,7 +28,7 @@ interface Result {
       target,
       hours
     };
-  }
+  };
   
   const calculateEx = (hours: Array<number>, target: number): Result => {
     const periodLength = hours.length;
@@ -61,13 +61,13 @@ interface Result {
     };
   
     return result;
-  }
+  };
   
   try {
     const { target, hours } = parseEXArguments(process.argv);
-    console.log(calculateEx(hours, target))
+    console.log(calculateEx(hours, target));
   } catch (error: unknown) {
-    let errorMessage = 'Something bad happened.'
+    let errorMessage = 'Something bad happened.';
     if (error instanceof Error) {
       errorMessage += ' Error: ' + error.message;
     }
