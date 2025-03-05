@@ -44,3 +44,7 @@ interface CalculateBMI {
     }
     console.log(errorMessage);
   }
+
+  export function bmiCalc(h: number, w:number) {
+    return calculateBmi(h, w);
+  }
