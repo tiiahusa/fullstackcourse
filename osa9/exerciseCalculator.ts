@@ -73,3 +73,7 @@ interface Result {
     }
     console.log(errorMessage);
   }
+
+    export function exCalc(h: Array<number>, t: number) {
+      return calculateEx(h, t);
+    }

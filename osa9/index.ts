@@ -1,6 +1,9 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import express from 'express';
 import { bmiCalc } from './bmiCalculator';
 //import { calculator, Operation } from './calculator';
+import { exCalc } from './exerciseCalculator';
 const app = express();
 app.use(express.json());
 
@@ -26,18 +29,18 @@ app.get('/bmi', (req, res) => {
         res.status(400).send('malformatted parameters');
   }});
 
-app.post('/exercises', (requ, res) => {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    res.send(requ.body);
-    //const { daily_exercises, target } = requ.body;
-    //res.send(`Daily ${daily_exercises} and target ${target}`);
-    /*if(typeof daily === 'string' && typeof target === 'string'){
-        if(!daily || !target ) {
-            return res.status(400).send({ error: 'parameters missing'});
-        } else if (isNaN(Number(target)) || Array.isArray(daily) ) {
-            return res.status(400).send({ error: 'malformatted parameters'});
-        } 
-    }*/
+app.post('/exercises', (req, res) => {
+    const { daily_exercises, target } = req.body;
+    if(Array.isArray(daily_exercises) && typeof target === 'number'){
+        if(!daily_exercises.length || !target ) {
+            res.status(400).send({ error: 'parameters missing'});
+        } else if (isNaN(Number(target)) || !Array.isArray(daily_exercises) ) {
+            res.status(400).send({ error: 'malformatted parameters'});
+          } else {
+          const result = exCalc(daily_exercises, Number(target));
+          res.send({ result });
+        }
+    } else res.status(400).send({error: 'malformatted parameters'});
 
   });
 
