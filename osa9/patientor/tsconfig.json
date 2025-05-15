@@ -4,16 +4,10 @@
     "outDir": "./build/",
     "module": "commonjs",
     "strict": true,
-    "noImplicitAny": true,
-    "noImplicitReturns": true,
-    "strictNullChecks": true,
-    "strictPropertyInitialization": true,
-    "strictBindCallApply": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noImplicitThis": true,
-    "alwaysStrict": true,
-    "esModuleInterop": true,
-    "declaration": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "esModuleInterop": true
   }
 }
