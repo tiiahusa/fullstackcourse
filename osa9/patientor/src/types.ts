@@ -15,4 +15,4 @@ export interface PatientEntry {
   occupation: string;
 }
 
-//export type NonSensitiveDiaryEntry = Omit<DiaryEntry, 'comment'>;
+export type NonSensitivePatientEntry = Omit<PatientEntry, 'ssn'>;

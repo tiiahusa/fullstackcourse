@@ -1,10 +1,10 @@
 import { Response, Router } from 'express';
 import patientService from '../services/patientService';
-import { PatientEntry } from '../types';
+import { NonSensitivePatientEntry } from '../types';
 
 const router = Router();
 
-router.get('/', (_req, res: Response<PatientEntry[]>) => {
+router.get('/', (_req, res: Response<NonSensitivePatientEntry[]>) => {
   res.send(patientService.getEntries());
 });
 
