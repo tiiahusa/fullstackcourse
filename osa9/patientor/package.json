@@ -26,6 +26,7 @@
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^5.1.0",
-    "patientor": "file:"
+    "patientor": "file:",
+    "uuid": "^11.1.0"
   }
 }
