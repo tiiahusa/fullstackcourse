@@ -70,9 +70,17 @@ const Part = ({ part }: { part: CoursePart }) => {
           </p>
         </div>
       )
+    default:
+      return assertNever(part);
   }
 
 }
+
+const assertNever = (value: never): never => {
+  throw new Error(
+    `Unhandled discriminated union member: ${JSON.stringify(value)}`
+  );
+};
 
 const Header = ({ name }: { name: string }): JSX.Element => {
   return <h1>{name}</h1>
