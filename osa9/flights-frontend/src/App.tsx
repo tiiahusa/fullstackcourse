@@ -7,10 +7,15 @@ const App = () => {
   const [newDiary, setNewDiary] = useState<Diary>();
   const [error, setError] = useState('');
 
-  const [date, setDate] = useState('');
+  const today = new Date().toISOString().split('T')[0];
+
+  const [date, setDate] = useState(today);
   const [visibility, setVisibility] = useState('');
   const [weather, setWeather] = useState('');
   const [comment, setComment] = useState('');
+
+  const visibilities = ['great', 'good', 'ok', 'poor'];
+  const weathers = ['sunny', 'rainy', 'cloudy', 'stormy', 'windy'];
 
   useEffect(() => {
     getAllDiarys().then(data => {
@@ -26,6 +31,13 @@ const App = () => {
       return () => clearTimeout(timer);
     }
   }, [error]);
+
+  const clearFields = () => {
+    setDate(today);
+    setComment('');
+    setVisibility('');
+    setWeather('');
+  }
   
   const diaryCreation = (event: React.SyntheticEvent) => {
     event.preventDefault()
@@ -39,6 +51,7 @@ const App = () => {
       if(data != undefined) {
         setDiarys(diarys.concat(data))
         setNewDiary(data)
+        clearFields()
       }
     }).catch(error => {
       setError(error.message);
@@ -49,34 +62,38 @@ const App = () => {
     <div>
       <p style={{ color: 'red' }}>{error}</p>
       <form onSubmit={diaryCreation}>
-        <p>
-          date:
+        <div>
+          <label><b>date: </b></label>
           <input
-            value={date}
+            value={date} type="date"
             onChange={(event) => setDate(event.target.value)}
           />
-        </p>
-        <p>
-          visibility:
-          <input
-            value={visibility}
-            onChange={(event) => setVisibility(event.target.value)}
-          />
-        </p>
-        <p>
-          weather:
-          <input
-            value={weather}
-            onChange={(event) => setWeather(event.target.value)}
-          />
-        </p>
-        <p>
-          comment:
+        </div>
+        <div>
+          <label><b>visibility: </b></label>
+          {visibilities.map(val => (
+            <div key={val}>
+              <input type="radio" name="visibility" value={val} onChange={() => setVisibility(val)} id={val} checked={visibility === val}/>
+              <label htmlFor={val}>{val}</label>
+            </div>
+          ))}
+        </div>
+        <div>
+          <label><b>weather: </b></label>
+          {weathers.map(val => (
+            <div key={val}>
+              <input type="radio" name="weather" value={val} onChange={() => setWeather(val)} id={val} checked={weather === val}/>
+              <label htmlFor={val}>{val}</label>
+            </div>
+          ))}
+        </div>
+        <div>
+          <label><b>comment: </b></label>
           <input
             value={comment}
             onChange={(event) => setComment(event.target.value)}
           />
-        </p>
+        </div>
         <button type='submit'>add</button>
       </form>
       <div>
