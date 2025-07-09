@@ -13,10 +13,15 @@ export interface DiagnoseEntry {
     latin?: string;
 }
 
-export type NonSensitivePatientEntry = Omit<PatientEntry, 'ssn'>;
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+export interface Entry {
+}
+
+export type NonSensitivePatientEntry = Omit<PatientEntry, 'ssn' | 'entries'>;
 
 export type NewPatientEntry = z.infer<typeof newPatientSchema>; 
 
 export interface PatientEntry extends NewPatientEntry {
   id: string;
+  entries: Entry[];
 }
