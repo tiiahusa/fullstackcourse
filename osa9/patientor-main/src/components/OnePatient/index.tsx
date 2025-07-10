@@ -5,11 +5,15 @@ import FemaleIcon from '@mui/icons-material/Female';
 import TransgenderIcon from '@mui/icons-material/Transgender';
 import { useParams } from 'react-router-dom';
 
-import { Patient } from "../../types";
+import { Patient, Diagnosis } from "../../types";
 
 import patientService from "../../services/patients";
 
-const OnePatient = () => {
+interface Props {
+  diagnoses : Diagnosis[]
+}
+
+const OnePatient = ({ diagnoses } : Props ) => {
 
     const [patient, setPatient] = useState<Patient>();
     const id = useParams().id;
@@ -20,7 +24,7 @@ const OnePatient = () => {
             if (id) {
             const fetchedPatient = await patientService.getOne(id);
             setPatient(fetchedPatient);
-            console.log(fetchedPatient);
+            //console.log(fetchedPatient);
             }
         } catch (e) {
             console.error("vituiksi meni ", e);
@@ -50,11 +54,14 @@ const OnePatient = () => {
             {patient.entries.map(entry => (
               <div key={entry.id}>
                 <p>{entry.date} <i>{entry.description}</i></p>
-                {entry.diagnosisCodes?.map( code => (
-                  <ul>
-                    <li>{code}</li>
-                  </ul>
-                ))}
+                {entry.diagnosisCodes?.map(code => {
+                  const diagnosis = diagnoses.find(d => d.code === code);
+                  return (
+                    <li key={code}>
+                      {code} {diagnosis ? diagnosis.name : ''}
+                    </li>
+                  );
+                })}
               </div>
             ))}
           </div>
