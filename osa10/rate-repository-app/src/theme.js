@@ -12,6 +12,7 @@ const theme = {
     btnBackgroud: '#0366d6',
     inputBackground: '#ffffff',
     inputBorder: '#cccccc',
+    error: '#d73a4a',
   },
   fontSizes: {
     body: 14,
