@@ -1,4 +1,4 @@
-import { View, StyleSheet, Pressable } from 'react-native';
+import { View, StyleSheet, Pressable, ScrollView } from 'react-native';
 import Text from './Text';
 import { Link } from "react-router-native";
 import theme from '../theme';
@@ -24,14 +24,16 @@ const AppBar = () => {
   return (
     
         <View style={styles.container}>
+          <ScrollView horizontal >
             <View style={styles.flexItem}>
                 <Link to="/list">
-                    <Text fontWeight="bold" fontSize="subheading" color="titles">Repositories</Text>
+                    <Text fontWeight="bold" fontSize="subheading" color="titles">Repositories     </Text>
                 </Link>
                 <Link to="/signin">
-                    <Text fontWeight="bold" fontSize="subheading" color="titles">Sign In</Text>
+                    <Text fontWeight="bold" fontSize="subheading" color="titles">Sign In     </Text>
                 </Link>
             </View>
+          </ScrollView>
         </View>
   )
 };
