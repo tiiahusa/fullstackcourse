@@ -10,6 +10,8 @@ const theme = {
     listBackground: '#ffffff',
     background: '#e1e4e8',
     btnBackgroud: '#0366d6',
+    inputBackground: '#ffffff',
+    inputBorder: '#cccccc',
   },
   fontSizes: {
     body: 14,
@@ -22,16 +24,34 @@ const theme = {
     normal: '400',
     bold: '700',
   },
+  borderRadius: {
+    small: 4,
+    medium: 8,
+  },
+  spacing: {
+    xs: 4,
+    sm: 8,
+    md: 12,
+    lg: 16,
+  },
+  buttons: {
+    primary: {
+      backgroundColor: '#0366d6',
+      color: '#ffffff',
+      paddingVertical: 12,
+      borderRadius: 4,
+    },
+  },
   appBar: {
     height: 50,
     paddingTop: Constants.statusBarHeight,
     alignItems: 'flex-end',
-    flexItemHeight: 25, 
-  }, 
+    flexItemHeight: 25,
+  },
   list: {
     padding: 10,
     itemSpacing: 10,
-  }
+  },
 };
 
 export default theme;
