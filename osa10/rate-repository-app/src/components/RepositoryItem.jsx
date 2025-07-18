@@ -1,7 +1,7 @@
 import { View, TouchableHighlight, Image, StyleSheet } from 'react-native';
 import Text from './Text';
 import theme from '../theme';
-import { formatNum } from '../utils';
+import formatNum from '../utils/utils';
 
 const styles = StyleSheet.create({
   container: {
