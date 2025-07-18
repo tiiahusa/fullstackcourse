@@ -1,7 +1,0 @@
-POST http://localhost:3003/exercise
-Content-type: application/json; charset=utf8
-
-{
-  "daily_exercises": [1, 0, 2, 0, 3, 0, 2.5],
-  "target": 2.5
-}
